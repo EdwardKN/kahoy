@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p  id="thisId" style="z-index: 5; position: relative;"></p>
+    <input type="text" id="inputId" style="z-index:5; position: relative;" placeholder="Id Of Other Player">
+    <button id="connectbutton" onclick="connect()" style="z-index: 5; position: relative;">Connect To Host Player</button>
+    <button id="hostbutton" onclick="initGame()" style="z-index: 5; position: relative;">Host game</button>
+    <script src="https://unpkg.com/peerjs@1.5.0/dist/peerjs.min.js"></script>
+    <script src="online.js"></script>
+</body>
+</html>
