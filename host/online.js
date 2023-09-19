@@ -6,17 +6,9 @@ while (emptyString.length < 6) {
 }
 const peerId = emptyString;
 
-/*
-Object.keys(connections).forEach(id => {
-    connections[id].send('TESTING')
-})
-*/
 
 const peer = new Peer(peerId, { debug: 1 })
 var connections = {};
-var connection;
-
-var host = false;
 
 peer.on('connection', x => {
     x.on('open', () => {
