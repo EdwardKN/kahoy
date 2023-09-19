@@ -3,6 +3,8 @@ var gameButtons = [];
 var currentEditingGame = undefined;
 var questionButtons = [];
 
+const questionTypes = ["True or False", "Single answer", "Multiple choice"]
+
 function init() {
     document.getElementById("newGame")?.remove();
     let newButton = document.createElement("button");
@@ -55,16 +57,36 @@ function init() {
             }
             document.body.appendChild(questionButtons[i]);
         })
+        document.getElementById("typebutton")?.remove();
+        let typebutton = document.createElement("select");
+        typebutton.id = "typebutton"
+        questionTypes.forEach(e => {
+            let option = document.createElement("option");
+            option.value = e;
+            option.innerText = e;
+            typebutton.appendChild(option);
+        })
+
+        document.body.appendChild(typebutton);
+
         //currentEditingGame.questions[currentEditingGame.currentSelectedQuestion]
     }
 }
 
+function loadGames() {
+    let gamesToLoad = JSON.parse(localStorage.getItem("games"))
+    console.log(gamesToLoad);
+
+    gamesToLoad.forEach(e => {
+        games.push(new Game(e.id, e.name, e.questions));
+    })
+}
 
 class Game {
-    constructor(id) {
-        this.questions = [new Question()];
+    constructor(id, name, questions) {
+        this.questions = questions ? questions : [new Question()];
         this.id = id;
-        this.name = "Game " + (this.id + 1)
+        this.name = name ? name : "Game " + (this.id + 1)
         this.currentSelectedQuestion = 0;
     }
     changeName(newName) {
@@ -78,7 +100,10 @@ class Question {
     }
 }
 
-class SingleAnswer extends Question {
+window.onbeforeunload = function (e) {
 
+    localStorage.setItem("games", JSON.prune(games));
+    e.preventDefault();
 }
+loadGames();
 init();
