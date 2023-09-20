@@ -154,7 +154,7 @@ function init() {
 }
 
 function loadGames() {
-    let gamesToLoad = JSON.parse(localStorage.getItem("games"))
+    let gamesToLoad = JSON.parse(localStorage.getItem("games")) || []
     console.log(gamesToLoad);
 
     gamesToLoad.forEach(e => {
