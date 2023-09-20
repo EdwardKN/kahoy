@@ -3,8 +3,6 @@ var gameButtons = [];
 var currentEditingGame = undefined;
 var questionButtons = [];
 
-const questionTypes = ["Single answer", "Multiple choice"]
-
 function init() {
     document.getElementById("newGame")?.remove();
     let newButton = document.createElement("button");

@@ -6,5 +6,9 @@ games.forEach(e => {
 
     tmpButton.innerText = e.name;
 
+    tmpButton.onclick = () => {
+        startGame(e)
+    }
+
     document.body.appendChild(tmpButton);
 })

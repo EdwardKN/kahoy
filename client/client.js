@@ -19,7 +19,7 @@ peer.on('connection', x => {
             input.id = 'nickname'
             input.placeholder = 'Enter nickname'
             document.body.appendChild(input)
-        }if (data.type === 'QUESTION') {
+        } if (data.type === 'QUESTION') {
             if (data.question.type === 'SINGLE') singleAnswer(data.question)
         }
     })

@@ -39,4 +39,4 @@ let q = {
     question: 'Vad är 2 * 5',
     alternatives: ['10', '5', '7', '3']
 }
-singleAnswer(q)
+//singleAnswer(q)
