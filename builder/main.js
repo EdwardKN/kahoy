@@ -106,6 +106,7 @@ function init() {
 
         for (let b = 0; b < currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1; b++) {
             document.getElementById("answer" + b)?.remove();
+            document.getElementById("rightAnswer" + b)?.remove();
 
             let answer = document.createElement("input")
             answer.type = "text";
