@@ -3,26 +3,9 @@
     z-index: 1;
 }
 
-
-#question-container {
+.background {
     position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
+    background-color: aqua;
     width: 100%;
     height: 100%;
-}
-
-#alternative-container {
-    margin: 20px auto;
-  width:400px;
-  height:400px;
-  background-color:#fff;
-  display:grid;
-  grid-template-columns: 200px 200px;
-  grid-row: auto auto;
-  grid-column-gap: 20px;
-  grid-row-gap: 20px;
-
 }

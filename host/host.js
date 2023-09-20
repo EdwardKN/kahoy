@@ -1,7 +1,12 @@
 const peer = new Peer(generateId(6), { debug: 1 } )
 let connections = {}
+
 let currentGame = undefined
-let questionIndex = undefined
+let idx = undefined
+
+let answers = {}
+let correctAnswers = []
+
 
 peer.on('connection', x => {
     x.on('open', () => {
@@ -16,28 +21,35 @@ peer.on('connection', x => {
     x.on('data', data => {
         console.log(data)
         if (data.type === 'ANSWER') {
-
+            answers[x.peer] = data.answers
         }
     })
 })
 
 function startGame(game) {
     currentGame = game
-    questionIndex = 0
+    idx = 0
 
-    for (let connection of Object.values(connections)) {
-        sendQuestion(connection, game.questions[questionIndex])
-    }
+    handleQuestion(idx)
+}
+
+function handleQuestion(idx) {
+    let question = currentGame.questions[idx]
+    //correctAnswers = shuffle(question.answers.map(e => e.text))
+
+    sendQuestion(question.type, question.question, question.answers)
 }
 
 
-function sendQuestion(connection, q) {
-    connection.send({
-        type: 'QUESTION',
-        questionType: q.type,
-        question: q.question,
-        alternatives: shuffle(q.answers.map(e => e.text))
-    })
+function sendQuestion(qType, q, qAns) {
+    for (let connection of Object.values(connections)) {
+        connection.send({
+            type: 'QUESTION',
+            questionType: qType,
+            question: q,
+            alternatives: qAns.map(e => e.text)
+        })
+    }
 }
 
 

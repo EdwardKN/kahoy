@@ -1,4 +1,4 @@
-var games = JSON.parse(localStorage.getItem("games"));
+var games = JSON.parse(localStorage.getItem("games")) || [];
 
 
 games.forEach(e => {

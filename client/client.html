@@ -7,13 +7,10 @@
     <title>Document</title>
 </head>
 <body style="overflow: hidden; margin: 0;">
-    <button onclick="window.location.replace('../main/main.html');" style="z-index: 1; position: relative;">Main</button>
+    <button onclick="window.location.replace('../main/main.html');" style="z-index: 1; position: relative;" id="main">Main</button>
     <input type="text" placeholder="PinCode" id="pincode">
+    <button type="button" onclick="connectToHost(hostId.value)" id="join">Join</button>
     
-    <div id="question-container">
-        <h1 id="question"></h1>
-        <div id="alternatives"></div>
-    </div>
     
     <script src="https://unpkg.com/peerjs@1.5.0/dist/peerjs.min.js"></script>
     <script src="../sharedFunctions.js"></script>
