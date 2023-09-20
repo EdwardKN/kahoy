@@ -9,7 +9,7 @@ function init() {
     document.getElementById("newGame")?.remove();
     let newButton = document.createElement("button");
     newButton.id = "newGame"
-    newButton.innerText = "+"
+    newButton.innerText = "New Game"
     newButton.onclick = function () {
         games.push(new Game(games.length));
         init();
@@ -28,6 +28,21 @@ function init() {
     })
 
     if (currentEditingGame) {
+        document.getElementById("removeGame")?.remove();
+        if (games.length > 1) {
+            let removeGame = document.createElement("button");
+            removeGame.id = "removeGame";
+            removeGame.innerText = "Remove Game"
+
+            removeGame.onclick = function () {
+                games.splice(currentEditingGame.id, 1)
+                currentEditingGame = games[0];
+                init();
+            }
+            document.body.appendChild(removeGame);
+        }
+
+
         document.getElementById("Gamename")?.remove();
         let gameName = document.createElement("input");
         gameName.value = currentEditingGame.name;
@@ -40,7 +55,7 @@ function init() {
         document.getElementById("newQuestion")?.remove();
         let newQuestionButton = document.createElement("button");
         newQuestionButton.id = "newQuestion"
-        newQuestionButton.innerText = "+"
+        newQuestionButton.innerText = "New Question"
         newQuestionButton.onclick = function () {
             currentEditingGame.questions.push(new Question());
             init();
@@ -50,9 +65,9 @@ function init() {
         questionButtons.forEach(e => e.remove());
         currentEditingGame.questions.forEach(function (e, i) {
             questionButtons.push(document.createElement("button"));
-            questionButtons[i].innerText = "Fråga " + (i + 1);
+            questionButtons[i].innerText = "Question " + (i + 1);
             questionButtons[i].onclick = function () {
-                for(let b = 0; b < currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length+1; b++){
+                for (let b = 0; b < currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1; b++) {
                     document.getElementById("answer" + b)?.remove();
                     document.getElementById("rightAnswer" + b)?.remove();
                 }
@@ -71,7 +86,7 @@ function init() {
             typebutton.appendChild(option);
         })
         typebutton.value = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type;
-        typebutton.onchange = function(){
+        typebutton.onchange = function () {
             currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type = typebutton.value;
             init();
         }
@@ -84,54 +99,54 @@ function init() {
         currentQuestion.id = "currentQuestion";
         currentQuestion.value = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question : "";
         currentQuestion.placeholder = "Write your question here";
-        currentQuestion.onchange = function(){
+        currentQuestion.onchange = function () {
             currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question = currentQuestion.value;
         }
         document.body.appendChild(currentQuestion);
 
-        for(let b = 0; b < currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length+1; b++){
+        for (let b = 0; b < currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1; b++) {
             document.getElementById("answer" + b)?.remove();
 
             let answer = document.createElement("input")
             answer.type = "text";
             answer.id = "answer" + b;
-            answer.placeholder = "Write answer " + (b+1) + " here";
+            answer.placeholder = "Write answer " + (b + 1) + " here";
             answer.value = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b]?.text ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b]?.text : ""
-            answer.onchange = function(){
-                if(answer.value != ""){
+            answer.onchange = function () {
+                if (answer.value != "") {
                     currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b] = {}
                     currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].text = answer.value;
-                }else{
-                    currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.splice(b,1);
-                    document.getElementById("answer" + (currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length+1))?.remove();
+                } else {
+                    currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.splice(b, 1);
+                    document.getElementById("answer" + (currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1))?.remove();
                 }
                 init();
             }
             document.body.appendChild(answer);
 
-            if(b < currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length){
+            if (b < currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length) {
                 document.getElementById("rightAnswer" + b)?.remove();
 
                 let rightAnswer = document.createElement("input")
                 rightAnswer.id = "rightAnswer" + b;
                 rightAnswer.name = "rightAnswer";
-                if(currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type == questionTypes[0]){
+                if (currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type == questionTypes[0]) {
                     rightAnswer.type = "radio";
                     rightAnswer.checked = (b == currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].rightAnswer)
-                    rightAnswer.onchange = function(){
+                    rightAnswer.onchange = function () {
                         currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].rightAnswer = b;
                     }
-                }else{
+                } else {
                     rightAnswer.checked = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].rightAnswer ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].rightAnswer : false
                     rightAnswer.type = "checkbox";
-                    rightAnswer.onchange = function(){
+                    rightAnswer.onchange = function () {
                         currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].rightAnswer = rightAnswer.checked;
                     }
                 }
-                
+
                 document.body.appendChild(rightAnswer);
             }
-            
+
 
         }
     }
@@ -143,8 +158,8 @@ function loadGames() {
 
     gamesToLoad.forEach(e => {
         let questions = [];
-        e.questions.forEach(g =>{
-            questions.push(new Question(g.type,g.question,g.answers,g.rightAnswer))
+        e.questions.forEach(g => {
+            questions.push(new Question(g.type, g.question, g.answers, g.rightAnswer))
         })
         games.push(new Game(e.id, e.name, questions));
     })
@@ -164,7 +179,7 @@ class Game {
 }
 
 class Question {
-    constructor(type,question,answers,rightAnswer) {
+    constructor(type, question, answers, rightAnswer) {
         this.type = type;
         this.answers = answers ? answers : [];
         this.question = question ? question : "";
