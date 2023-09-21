@@ -2,7 +2,7 @@ container{
     display: flex;
     width: 100%;
     justify-content: center;
-    padding: 30px;
+    padding: 10px;
 }
 
 #gameselectorContainer{
@@ -21,6 +21,14 @@ container{
   padding-right: 100px;
   width: calc(100vw - 100px);
 }
+
+#answerContainer{
+  width: calc(100vw - 100px);
+    padding-left: 50px;
+  padding-right: 100px;
+
+}
+
 body{
     background-color:#01010f;
     overflow:   hidden ;
