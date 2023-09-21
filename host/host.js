@@ -40,9 +40,14 @@ peer.on('connection', x => {
         }
 
         if (data.type === 'ANSWER') {
-            if (data.questionType === 'Single answer') {
-                connections[x.peer].correct = (currentGame.questions[idx].rightAnswer === data.answer)
+            let clientAnswers = data.answer
+            let correctAnswers = currentGame.questions[idx].answers.map(e => e.rightAnswer)
+            for (let i = 0; i < currentGame.questions[idx].answers; i++) {
+
+                correct = .questions[idx].answers.includes
             }
+
+            connections[x.peer].correct = correct
         }
     })
 })

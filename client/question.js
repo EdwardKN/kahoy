@@ -23,7 +23,7 @@ function singleAnswer(question, alternatives) {
             connection.send({
                 type: 'ANSWER',
                 questionType: 'Single answer',
-                answer: i
+                answer: [i]
             })
             document.body.removeChild(container)
         }
