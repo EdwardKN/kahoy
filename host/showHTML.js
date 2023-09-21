@@ -22,21 +22,24 @@ function showPreviewScreen() {
     let lock = document.createElement('img')
     lock.id = 'lock'
     lock.src = 'imgs/open-lock.png'
-    lock.state = 'open'
-    lock.style.width = '20px'
+    lock.state = true
     lock.onclick = () => {
-        if (lock.state === 'open') {
+        if (lock.state) {
             lock.src = 'imgs/closed-lock.png'
-            lock.state = 'closed'
-        } else if (lock.state === 'closed') {
+        } else if (!lock.state) {
             lock.src = 'imgs/open-lock.png'
-            lock.state = 'open'
         }
+        lock.state = !lock.state
     }
 
     let start = document.createElement('button')
     start.className = 'next'
     start.textContent = 'Start'
+    start.disabled = true
+    
+    start.onclick = () => {
+        console.log("Hi")
+    }
 
     // Client Container
     /* WAITING FOR PLAYERS HAS NOT BEEN IMPLEMENTED */

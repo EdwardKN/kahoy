@@ -1,7 +1,6 @@
 const peer = new Peer(generateId(6), { debug: 1 } )
 let connections = {}
 
-/* IMEPLEMENT HEARTBEAT */
 let currentGame = undefined
 let idx = undefined
 let layout = 'LEADERBOARD'
@@ -10,20 +9,20 @@ let currentNames = {}
 
 peer.on('connection', x => {
     x.on('open', () => {
-        if (!currentGame) return
+        if (!currentGame || !document.getElementById('lock').state) return
         console.log(x.peer + ' connected')
         connections[x.peer] = peer.connect(x.peer)
     })
 
     x.on('close', () => {
-        
+        clearTimeout(beat)
     })
 
     x.on('data', response => {
-        let data = response.data
-        console.log(response)
+        if (response.type === 'HEARTBEAT') { recieved = true; return }
 
-        if (response.type === 'HEARTBEAT') { recieved = true }
+        let data = response.data        
+        console.log(response)
 
         if (response.type === 'NICKNAME') {
             if (!beat) {
@@ -31,19 +30,19 @@ peer.on('connection', x => {
                 heartbeat(x.peer)
             }
             let nickname = data.nickname.trim()
-            let _valid = !(Object.values(currentNames).includes(nickname) || nickname.length < 3 
-                                                                            || nickname.length > 16)
+            let _valid = !(Object.values(currentNames).includes(nickname) || 
+                        nickname.length < 3 || nickname.length > 16)
             connections[x.peer].send({ type: 'NICKNAME', data: { valid: _valid }})
             if (!_valid) return
+            
             currentNames[x.peer] = nickname
-
             let client = document.createElement('div')
             client.className = 'client'
             client.textContent = data.nickname
-            connections[x.peer]
-            client.onclick = () => removeClient()
-            document.getElementById('client-container').appendChild(client)
+            client.onclick = () => removeClient(x.peer)
 
+            document.getElementById('client-container').appendChild(client)
+            document.getElementsByClassName('next')[0].disabled = false
         }
 
         if (response.type === 'ANSWER') {
@@ -87,6 +86,7 @@ function removeClient(id) {
     connections[id].close()
     delete currentNames[id]
     delete connections[id]
+    if (Object.values(connections).length === 0) { document.getElementsByClassName('next')[0].disabled = true }
 }
 
 
@@ -97,6 +97,8 @@ function startGame(game) {
 
     showPreviewScreen()
 }
+
+
 
 
 function showQuestion() {

@@ -29,10 +29,10 @@ peer.on('connection', x => {
     })
 
     x.on('data', response => {
+        if (response.type === 'HEARTBEAT') { connection.send({ type: response.type }); return }
+
         let data = response.data
         console.log(response)
-
-        if (response.type === 'HEARTBEAT') { connection.send({ type: response.type }) }
 
         if (response.type === 'NICKNAME') {
             if (!data.valid) { alert("Invalid username") }
