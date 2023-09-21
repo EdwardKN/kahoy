@@ -1,6 +1,7 @@
 const peer = new Peer(generateId(6), { debug: 1 } )
 let connections = {}
 
+/* IMEPLEMENT HEARTBEAT */
 let currentGame = undefined
 let idx = undefined
 let layout = 'LEADERBOARD'
@@ -12,8 +13,6 @@ peer.on('connection', x => {
         if (!currentGame) return
         console.log(x.peer + ' connected')
         connections[x.peer] = peer.connect(x.peer)
-        console.log(connections)
-
     })
 
     x.on('close', () => {
@@ -25,7 +24,8 @@ peer.on('connection', x => {
         console.log(response)
 
         if (response.type === 'NICKNAME') {
-            let _valid = !currentNames.includes(data.nickname)
+            let nickname = data.nickname.trim()
+            let _valid = !(currentNames.includes(nickname) || nickname.length < 3)
             connections[x.peer].send({ type: 'NICKNAME', data: { valid: _valid }})
             if (!_valid) return
 
@@ -37,7 +37,7 @@ peer.on('connection', x => {
                 connections[x.peer].close()
                 delete connections[x.peer]
             }
-            document.getElementById('client-list').appendChild(client)
+            document.getElementById('client-container').appendChild(client)
 
         }
 
@@ -57,38 +57,16 @@ peer.on('connection', x => {
     })
 })
 
+peer.on('disconnected', data => {
+    console.log(data)
+})
+
 function startGame(game) {
     currentGame = game
     currentNames = []
     idx = 0
 
-    // Remove Main, and Games Button
-    document.getElementById('main').remove()
-    //document.getElementById('client-list').remove()
-    
-    let container = document.createElement('main')
-    container.className = 'question-container'
-
-    let header = document.createElement('h1')
-    header.textContent = peer.id
-
-    let clients = document.createElement('div')
-    clients.id = 'client-list'
-    
-    let start = document.createElement('button')
-    start.id = 'start-game'
-    start.textContent = 'Start'
-    start.onclick = () => {
-        if (layout === 'QUESTION') handleLeaderboard()
-        if (layout === 'LEADERBOARD') handleQuestion()
-        handleQuestion()
-        start.textContent = 'Next'
-    }
-
-    container.appendChild(header)
-    container.appendChild(clients)
-    container.appendChild(start)
-    document.body.appendChild(container)
+    previewScreen()
 }
 
 
@@ -121,13 +99,7 @@ function sendQuestion(qType, q, qAns) {
     }
 }
 
-function previewScreen() {
-    let container = document.createElement('div')
-    container.className = 'main-container'
 
-    let gameId = document.createElement('h1')
-    gameId.id = 'game-id'
-}
 
 /* Preview Screen
     Game Id
@@ -138,3 +110,4 @@ function previewScreen() {
         Amount of players, sound, settings, fullscreen
 
 */
+

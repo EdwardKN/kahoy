@@ -4,7 +4,7 @@ games.forEach(e => {
     let tmpButton = document.createElement("button");
 
     tmpButton.innerText = e.name;
-    tmpButton.className = 'game-buttons'
+    tmpButton.className = 'game-button'
 
     tmpButton.onclick = () => {
         startGame(e)

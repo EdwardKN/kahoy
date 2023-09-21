@@ -33,7 +33,7 @@ peer.on('connection', x => {
         console.log(response)
 
         if (response.type === 'NICKNAME') {
-            if (!data.valid) { alert("Username already taken") }
+            if (!data.valid) { alert("Invalid username") }
             else {
                 document.getElementsByClassName('main-container')[0].remove()
                 let h1 = document.createElement('h1')
