@@ -22,8 +22,10 @@ function singleAnswer(question, alternatives) {
         alternative.onclick = () => {
             connection.send({
                 type: 'ANSWER',
-                questionType: 'Single answer',
-                answer: [i]
+                data: {
+                    questionType: 'Single answer',
+                    answer: [i]
+                }
             })
             document.body.removeChild(container)
         }
@@ -54,4 +56,5 @@ sendQuestion()
 showCorrectClient()
 showLeaderboard()
 showCorrectHost()
+showStartHost()
 */

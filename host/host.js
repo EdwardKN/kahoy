@@ -5,6 +5,7 @@ let currentGame = undefined
 let idx = undefined
 let layout = 'LEADERBOARD'
 
+let currentNames = []
 
 peer.on('connection', x => {
     x.on('open', () => {
@@ -19,17 +20,18 @@ peer.on('connection', x => {
         
     })
 
-    x.on('data', data => {
-        console.log(data)
-        if (data.type === 'NICKNAME') {
-            if (Object.values(connections).some(c => c.nickname === data.data.nickname)) {
-                connections[x.peer].send({ type: 'NICKNAME', valid: false })
-                return
-            } else { connections[x.peer].send({ type: 'NICKNAME', valid: true }) }
+    x.on('data', response => {
+        let data = response.data
+        console.log(response)
+
+        if (response.type === 'NICKNAME') {
+            let _valid = !currentNames.includes(data.nickname)
+            connections[x.peer].send({ type: 'NICKNAME', data: { valid: _valid }})
+            if (!_valid) return
+
             let client = document.createElement('div')
             client.className = 'client'
-            connections[x.peer].nickname = data.data.nickname
-            client.textContent = data.data.nickname
+            client.textContent = data.nickname
             client.onclick = () => {
                 client.remove()
                 connections[x.peer].close()
@@ -39,12 +41,15 @@ peer.on('connection', x => {
 
         }
 
-        if (data.type === 'ANSWER') {
+        if (response.type === 'ANSWER') {
             let clientAnswers = data.answer
-            let correctAnswers = currentGame.questions[idx].answers.map(e => e.rightAnswer)
-            for (let i = 0; i < currentGame.questions[idx].answers; i++) {
+            let correctAnswers = []
+            currentGame.questions[idx].answers.forEach((answer, i) => { if (answer.rightAnswer) { correctAnswers.push(i) }})
 
-                correct = .questions[idx].answers.includes
+            let correct = clientAnswers.length === correctAnswers.length
+            
+            for (let i of correctAnswers) {
+                if (!clientAnswers.includes(i)) { correct = false }
             }
 
             connections[x.peer].correct = correct
@@ -54,13 +59,12 @@ peer.on('connection', x => {
 
 function startGame(game) {
     currentGame = game
+    currentNames = []
     idx = 0
 
-    // Create Lobby
+    // Remove Main, and Games Button
     document.getElementById('main').remove()
-
-    //let a = document.getElementsByClassName('game-buttons')
-    //while (a[0]) a[0].remove()
+    //document.getElementById('client-list').remove()
     
     let container = document.createElement('main')
     container.className = 'question-container'
@@ -108,10 +112,29 @@ function sendQuestion(qType, q, qAns) {
     for (let connection of Object.values(connections)) {
         connection.send({
             type: 'QUESTION',
-            questionType: qType,
-            question: q,
-            alternatives: qAns.map(e => e.text)
+            data: {
+                questionType: qType,
+                question: q,
+                alternatives: qAns.map(e => e.text)
+            }
         })
     }
 }
 
+function previewScreen() {
+    let container = document.createElement('div')
+    container.className = 'main-container'
+
+    let gameId = document.createElement('h1')
+    gameId.id = 'game-id'
+}
+
+/* Preview Screen
+    Game Id
+        Lock, Start
+
+    Waiting for players (when no players)
+
+        Amount of players, sound, settings, fullscreen
+
+*/

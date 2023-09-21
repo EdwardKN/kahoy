@@ -1,16 +1,26 @@
-const hostId = document.getElementById('pincode')
+const gameInput = document.getElementById('game-input')
 const peer = new Peer(generateId(6))
 let connection = undefined
+// Ok, kör!
+// Spelarnamn
 
+peer.on('error', error => {
+    console.log(error.type)
+    connection = undefined
+})
 
 peer.on('connection', x => {
     x.on('open', () => {
-        console.log("Connected to " + x.peer)
-        document.getElementById('pincode').remove()
-        document.getElementById('main').remove()
-        document.getElementById('join').remove()
+        let confirmBtn = document.getElementById('enter-pin')
 
-        enterNickname()
+        gameInput.placeholder = 'Spelarnamn'
+        gameInput.value = ''
+        confirmBtn.textContent = 'Ok, kör!'
+
+        confirmBtn.onclick = () => connection.send({
+            type: 'NICKNAME',
+            data: { nickname: gameInput.value }
+        })
     })
 
     x.on('close', () => {
@@ -18,22 +28,25 @@ peer.on('connection', x => {
         window.location.reload()
     })
 
-    x.on('data', data => {
-        console.log(data)
+    x.on('data', response => {
+        let data = response.data
+        console.log(response)
 
-        if (data.type === 'NICKNAME') {
-            if (data.valid === true) {
-                document.getElementById('nickname-container').remove()
-                
+        if (response.type === 'NICKNAME') {
+            if (!data.valid) { alert("Username already taken") }
+            else {
+                document.getElementsByClassName('main-container')[0].remove()
+                let h1 = document.createElement('h1')
+                h1.textContent = 'Waiting for host...'
+                document.body.appendChild(h1)
             }
-            else alert("Username Already Taken")
         }
 
-        if (data.type === 'QUESTION') {
+        if (response.type === 'QUESTION') {
             if (data.questionType === 'Single answer') singleAnswer(data.question, data.alternatives)
         }
 
-        if (data.type === 'ISCORRECT') {
+        if (response.type === 'ISCORRECT') {
             let result = document.createElement('div')
             result.className = 'is-correct-answer'
             result.style.backgroundColor = data.correct ? 'green' : 'red'
@@ -42,34 +55,13 @@ peer.on('connection', x => {
     })
 })
 
-peer.on('error', error => {
-    console.log(error.type)
-    connection = undefined
-})
-
 function connectToHost(hostId) {
     if (hostId === peer.id) { alert("Can't connect to self!"); return }
-    if (connection) { connection.close(); connection = undefined }
+    if (connection) { connection.close() }
 
     connection = peer.connect(hostId)
 }
 
-function enterNickname() {
-    let div = document.createElement('div')
-    div.id = 'nickname-container'
-    let header = document.createElement('h1')
-    let container = document.createElement('question-container')
-    let name = document.createElement('input')
-    name.placeholder = 'Enter nickname'
-    let confirm = document.createElement('button')
-    confirm.textContent = 'Confirm'
-    confirm.onclick = () => {
-        connection.send({ type: 'NICKNAME', data: { nickname: name.value }})
-    }
 
-    container.appendChild(name)
-    container.appendChild(confirm)
-    div.appendChild(header)
-    div.appendChild(container)
-    document.body.appendChild(div)
-}
+// Stopping page from reloading when pressing enter in input field for some reason
+document.getElementById('game-input').addEventListener('keydown', (e) => { if (e.keyCode === 13) { e.preventDefault() } })

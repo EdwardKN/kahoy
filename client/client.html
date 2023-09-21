@@ -3,13 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
-<body style="overflow: hidden; margin: 0;">
-    <button onclick="window.location.replace('../main/main.html');" style="z-index: 1; position: relative;" id="main">Main</button>
-    <input type="text" placeholder="PinCode" id="pincode">
-    <button type="button" onclick="connectToHost(hostId.value)" id="join">Join</button>
+<body>
+    <main class="main-container">
+        <button id="main-menu" onclick="window.location.replace('../main/main.html');">Meny</button>
+        <div id="form-wrapper">
+            <form class="enter-pin-form">
+                <input id="game-input" type="text" placeholder="Pinkod" spellcheck="false" autocomplete="off">
+                <button id="enter-pin" type="button" onclick="connectToHost(gameInput.value)">Gå med</button>
+            </form>
+        </div>
+    </main>
     
     
     <script src="https://unpkg.com/peerjs@1.5.0/dist/peerjs.min.js"></script>

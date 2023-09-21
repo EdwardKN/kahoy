@@ -1,6 +1,5 @@
 var games = JSON.parse(localStorage.getItem("games")) || [];
 
-
 games.forEach(e => {
     let tmpButton = document.createElement("button");
 
