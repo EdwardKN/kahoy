@@ -113,7 +113,6 @@ function init() {
         }
 
 
-        document.body.appendChild(typebutton);
 
         let currentQuestion = document.createElement("input");
         currentQuestion.type = "text";
@@ -124,9 +123,11 @@ function init() {
             currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question = currentQuestion.value;
         }
         document.body.appendChild(currentQuestion);
+        document.body.appendChild(typebutton);
 
+        let numberOfQuestions = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1
 
-        for (let b = 0; b < currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1; b++) {
+        for (let b = 0; b < (numberOfQuestions > 4 ? 4 : numberOfQuestions); b++) {
             document.getElementById("answer" + b)?.remove();
             document.getElementById("rightAnswer" + b)?.remove();
 
