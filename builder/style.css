@@ -1,12 +1,4 @@
-#currentQuestion{
-    width: 500px;
-    text-align: center;
-    display: flex;
-    margin-right: auto;
-    margin-left: auto;
-}
-
-#typebutton{
-    box-sizing:border-box;
-    display:flex;
+container{
+    display: block;
+    width: 100%;
 }

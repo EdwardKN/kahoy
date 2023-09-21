@@ -6,18 +6,20 @@ var questionButtons = [];
 const questionTypes = ["Single answer", "Multiple choice"]
 
 function init() {
-    document.getElementById("newGame")?.remove();
-    document.getElementById("Gamename")?.remove();
-    document.getElementById("newQuestion")?.remove();
-    document.getElementById("removeGame")?.remove();
-    document.getElementById("removeQuestion")?.remove();
-    document.getElementById("typebutton")?.remove();
-    document.getElementById("currentQuestion")?.remove();
+    document.getElementById("gameselectorContainer")?.remove();
+    document.getElementById("currentGameContainer")?.remove();
+    document.getElementById("questionListContainer")?.remove();
+    document.getElementById("questionSettingContainer")?.remove();
     questionButtons.forEach(e => e.remove());
     for (let b = 0; b < 1000; b++) {
         document.getElementById("answer" + b)?.remove();
         document.getElementById("rightAnswer" + b)?.remove();
     }
+
+    let gameselectorContainer = document.createElement("container");
+    gameselectorContainer.id = "gameselectorContainer";
+    document.body.appendChild(gameselectorContainer);
+
     let newButton = document.createElement("button");
     newButton.id = "newGame"
     newButton.innerText = "New Game"
@@ -25,7 +27,7 @@ function init() {
         games.push(new Game());
         init();
     }
-    document.body.appendChild(newButton);
+    gameselectorContainer.appendChild(newButton);
 
     gameButtons.forEach(e => e.remove());
     games.forEach(function (e, i) {
@@ -35,10 +37,24 @@ function init() {
             currentEditingGame = e;
             init();
         }
-        document.body.appendChild(gameButtons[i]);
+        gameselectorContainer.appendChild(gameButtons[i]);
     })
 
     if (currentEditingGame) {
+
+        let currentGameContainer = document.createElement("container");
+        currentGameContainer.id = "currentGameContainer";
+        document.body.appendChild(currentGameContainer);
+
+        let gameName = document.createElement("input");
+        gameName.value = currentEditingGame.name;
+        gameName.type = "text";
+        gameName.id = "Gamename"
+        currentGameContainer.appendChild(gameName);
+        gameName.onchange = function () {
+            currentEditingGame.changeName(gameName.value);
+        }
+
         let removeGame = document.createElement("button");
         removeGame.id = "removeGame";
         removeGame.innerText = "Remove Game"
@@ -52,16 +68,12 @@ function init() {
             init();
         }
 
-        document.body.appendChild(removeGame);
+        currentGameContainer.appendChild(removeGame);
 
-        let gameName = document.createElement("input");
-        gameName.value = currentEditingGame.name;
-        gameName.type = "text";
-        gameName.id = "Gamename"
-        document.body.appendChild(gameName);
-        gameName.onchange = function () {
-            currentEditingGame.changeName(gameName.value);
-        }
+        let questionListContainer = document.createElement("container");
+        questionListContainer.id = "questionListContainer";
+        document.body.appendChild(questionListContainer);
+
         let newQuestionButton = document.createElement("button");
         newQuestionButton.id = "newQuestion"
         newQuestionButton.innerText = "New Question"
@@ -69,7 +81,7 @@ function init() {
             currentEditingGame.questions.push(new Question());
             init();
         }
-        document.body.appendChild(newQuestionButton);
+        questionListContainer.appendChild(newQuestionButton);
 
         questionButtons.forEach(e => e.remove());
         currentEditingGame.questions.forEach(function (e, i) {
@@ -83,7 +95,7 @@ function init() {
                 currentEditingGame.currentSelectedQuestion = i;
                 init();
             }
-            document.body.appendChild(questionButtons[i]);
+            questionListContainer.appendChild(questionButtons[i]);
         })
         let typebutton = document.createElement("select");
         typebutton.id = "typebutton"
@@ -98,6 +110,10 @@ function init() {
             currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type = typebutton.value;
             init();
         }
+        let questionSettingContainer = document.createElement("container");
+        questionSettingContainer.id = "questionSettingContainer";
+        document.body.appendChild(questionSettingContainer);
+
         if (currentEditingGame.questions.length > 1) {
 
             let removeQuestion = document.createElement("button");
@@ -109,7 +125,7 @@ function init() {
                 currentEditingGame.currentSelectedQuestion = 0;
                 init();
             }
-            document.body.appendChild(removeQuestion);
+            questionSettingContainer.appendChild(removeQuestion);
         }
 
 
@@ -122,8 +138,8 @@ function init() {
         currentQuestion.onchange = function () {
             currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question = currentQuestion.value;
         }
-        document.body.appendChild(currentQuestion);
-        document.body.appendChild(typebutton);
+        questionSettingContainer.appendChild(currentQuestion);
+        questionSettingContainer.appendChild(typebutton);
 
         let numberOfQuestions = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1
 
