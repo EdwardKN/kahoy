@@ -13,7 +13,14 @@ container{
     padding-right: 100px;
     width: calc(100vw - 100px);
 }
-  
+#questionListContainer{
+  justify-content:left;
+
+  overflow-x: auto;
+  padding-left: 50px;
+  padding-right: 100px;
+  width: calc(100vw - 100px);
+}
 body{
     background-color:#01010f;
     overflow:   hidden ;

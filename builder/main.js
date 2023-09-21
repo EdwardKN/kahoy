@@ -118,19 +118,7 @@ function init() {
         questionSettingContainer.id = "questionSettingContainer";
         document.body.appendChild(questionSettingContainer);
 
-        if (currentEditingGame.questions.length > 1) {
-
-            let removeQuestion = document.createElement("button");
-            removeQuestion.id = "removeQuestion";
-            removeQuestion.innerText = "Remove Question"
-
-            removeQuestion.onclick = function () {
-                currentEditingGame.questions.splice(currentEditingGame.currentSelectedQuestion, 1);
-                currentEditingGame.currentSelectedQuestion = 0;
-                init();
-            }
-            questionSettingContainer.appendChild(removeQuestion);
-        }
+        
 
 
 
@@ -148,13 +136,25 @@ function init() {
             currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type = typebutton.value;
             init();
         });
+        if (currentEditingGame.questions.length > 1) {
 
+            let removeQuestion = document.createElement("button");
+            removeQuestion.id = "removeQuestion";
+            removeQuestion.innerText = "Remove Question"
+
+            removeQuestion.onclick = function () {
+                currentEditingGame.questions.splice(currentEditingGame.currentSelectedQuestion, 1);
+                currentEditingGame.currentSelectedQuestion = 0;
+                init();
+            }
+            questionSettingContainer.appendChild(removeQuestion);
+        }
 
         let answerContainer = document.createElement("container");
         answerContainer.id = "answerContainer";
         document.body.appendChild(answerContainer);
 
-        let numberOfAnswers = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1
+        let numberOfAnswers = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1 : 0
 
         for (let b = 0; b < (numberOfAnswers > 4 ? 4 : numberOfAnswers); b++) {
 
