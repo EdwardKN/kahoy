@@ -1,4 +1,4 @@
-function previewScreen() {
+function showPreviewScreen() {
     document.getElementById('main').remove()
     let a = document.getElementsByClassName('game-button')
     while (a[0]) a[0].remove()

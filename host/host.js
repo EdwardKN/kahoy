@@ -6,7 +6,7 @@ let currentGame = undefined
 let idx = undefined
 let layout = 'LEADERBOARD'
 
-let currentNames = []
+let currentNames = {}
 
 peer.on('connection', x => {
     x.on('open', () => {
@@ -23,20 +23,25 @@ peer.on('connection', x => {
         let data = response.data
         console.log(response)
 
+        if (response.type === 'HEARTBEAT') { recieved = true }
+
         if (response.type === 'NICKNAME') {
+            if (!beat) {
+                connections[x.peer].send({ type: 'HEARTBEAT' })
+                heartbeat(x.peer)
+            }
             let nickname = data.nickname.trim()
-            let _valid = !(currentNames.includes(nickname) || nickname.length < 3)
+            let _valid = !(Object.values(currentNames).includes(nickname) || nickname.length < 3 
+                                                                            || nickname.length > 16)
             connections[x.peer].send({ type: 'NICKNAME', data: { valid: _valid }})
             if (!_valid) return
+            currentNames[x.peer] = nickname
 
             let client = document.createElement('div')
             client.className = 'client'
             client.textContent = data.nickname
-            client.onclick = () => {
-                client.remove()
-                connections[x.peer].close()
-                delete connections[x.peer]
-            }
+            connections[x.peer]
+            client.onclick = () => removeClient()
             document.getElementById('client-container').appendChild(client)
 
         }
@@ -57,16 +62,40 @@ peer.on('connection', x => {
     })
 })
 
-peer.on('disconnected', data => {
-    console.log(data)
-})
+const responseTiem = 1000
+let recieved = true
+let beat
+
+function heartbeat(id) {
+    recieved = false
+    beat = setTimeout(() => {
+        clearTimeout(beat)
+
+        if (recieved) {
+            connections[id].send({ type: 'HEARTBEAT' })
+            heartbeat(id)
+        } else removeClient(id)
+            
+    }, responseTiem)
+}
+
+function removeClient(id) {
+    for (let client of document.getElementsByClassName('client')) {
+        if (client.textContent === currentNames[id]) { client.remove() }
+    }
+
+    connections[id].close()
+    delete currentNames[id]
+    delete connections[id]
+}
+
 
 function startGame(game) {
     currentGame = game
     currentNames = []
     idx = 0
 
-    previewScreen()
+    showPreviewScreen()
 }
 
 
@@ -75,9 +104,6 @@ function showQuestion() {
     container.className = 'main-container'
 
 }
-
-
-
 
 function handleQuestion() {
     let question = currentGame.questions[idx]
@@ -98,16 +124,3 @@ function sendQuestion(qType, q, qAns) {
         })
     }
 }
-
-
-
-/* Preview Screen
-    Game Id
-        Lock, Start
-
-    Waiting for players (when no players)
-
-        Amount of players, sound, settings, fullscreen
-
-*/
-
