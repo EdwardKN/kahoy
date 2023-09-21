@@ -10,11 +10,7 @@ function init() {
     document.getElementById("currentGameContainer")?.remove();
     document.getElementById("questionListContainer")?.remove();
     document.getElementById("questionSettingContainer")?.remove();
-    questionButtons.forEach(e => e.remove());
-    for (let b = 0; b < 1000; b++) {
-        document.getElementById("answer" + b)?.remove();
-        document.getElementById("rightAnswer" + b)?.remove();
-    }
+    document.getElementById("answerContainer")?.remove();
 
     let gameselectorContainer = document.createElement("container");
     gameselectorContainer.id = "gameselectorContainer";
@@ -64,7 +60,7 @@ function init() {
             games.forEach((e, i) => {
                 e.id = i;
             })
-            currentEditingGame = undefined;
+            currentEditingGame = games[0];
             init();
         }
 
@@ -97,19 +93,27 @@ function init() {
             }
             questionListContainer.appendChild(questionButtons[i]);
         })
+        let tmpDiv = document.createElement("div");
+
         let typebutton = document.createElement("select");
         typebutton.id = "typebutton"
+        let option = document.createElement("option");
+        option.value = "0";
+        option.innerText = "Type Of Question";
+        typebutton.appendChild(option);
+
         questionTypes.forEach(e => {
             let option = document.createElement("option");
             option.value = e;
             option.innerText = e;
             typebutton.appendChild(option);
         })
-        typebutton.value = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type;
-        typebutton.onchange = function () {
-            currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type = typebutton.value;
-            init();
-        }
+        tmpDiv.className = "custom-select"
+        typebutton.value = (currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type : "0");
+            
+        tmpDiv.appendChild(typebutton);
+
+
         let questionSettingContainer = document.createElement("container");
         questionSettingContainer.id = "questionSettingContainer";
         document.body.appendChild(questionSettingContainer);
@@ -139,13 +143,21 @@ function init() {
             currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question = currentQuestion.value;
         }
         questionSettingContainer.appendChild(currentQuestion);
-        questionSettingContainer.appendChild(typebutton);
+        questionSettingContainer.appendChild(tmpDiv);
+        fixSelectButtons([tmpDiv],function(){
+            currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type = typebutton.value;
+            init();
+        });
 
-        let numberOfQuestions = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1
 
-        for (let b = 0; b < (numberOfQuestions > 4 ? 4 : numberOfQuestions); b++) {
-            document.getElementById("answer" + b)?.remove();
-            document.getElementById("rightAnswer" + b)?.remove();
+        let answerContainer = document.createElement("container");
+        answerContainer.id = "answerContainer";
+        document.body.appendChild(answerContainer);
+
+        let numberOfAnswers = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1
+
+        for (let b = 0; b < (numberOfAnswers > 4 ? 4 : numberOfAnswers); b++) {
+
 
             let answer = document.createElement("input")
             answer.type = "text";
@@ -162,10 +174,9 @@ function init() {
                 }
                 init();
             }
-            document.body.appendChild(answer);
+            answerContainer.appendChild(answer);
 
             if (b < currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length) {
-                document.getElementById("rightAnswer" + b)?.remove();
 
                 let rightAnswer = document.createElement("input")
                 rightAnswer.id = "rightAnswer" + b;
@@ -184,7 +195,7 @@ function init() {
                     }
                 }
 
-                document.body.appendChild(rightAnswer);
+                answerContainer.appendChild(rightAnswer);
             }
 
 
