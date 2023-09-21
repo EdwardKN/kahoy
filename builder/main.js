@@ -110,7 +110,7 @@ function init() {
         })
         tmpDiv.className = "custom-select"
         typebutton.value = (currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type : "0");
-            
+
         tmpDiv.appendChild(typebutton);
 
 
@@ -118,7 +118,7 @@ function init() {
         questionSettingContainer.id = "questionSettingContainer";
         document.body.appendChild(questionSettingContainer);
 
-        
+
 
 
 
@@ -132,7 +132,7 @@ function init() {
         }
         questionSettingContainer.appendChild(currentQuestion);
         questionSettingContainer.appendChild(tmpDiv);
-        fixSelectButtons([tmpDiv],function(){
+        fixSelectButtons([tmpDiv], function () {
             currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type = typebutton.value;
             init();
         });
@@ -205,7 +205,6 @@ function init() {
 
 function loadGames() {
     let gamesToLoad = JSON.parse(localStorage.getItem("games"))
-    console.log(gamesToLoad);
 
     gamesToLoad.forEach(e => {
         let questions = [];
