@@ -1,48 +1,49 @@
 const peer = new Peer(generateId(6), { debug: 1 } )
-let connections = {}
+let clients = {}
 
 let currentGame = undefined
 let idx = undefined
 let layout = 'LEADERBOARD'
 
 peer.on('connection', x => {
+    let id = x.peer
     x.on('open', () => {
         if (!currentGame || !document.getElementById('lock').state) return
-        console.log(x.peer + ' connected')
-        connections[x.peer] = {}
-        connections[x.peer].connection = peer.connect(x.peer)
+        console.log(id + ' connected')
+        clients[id] = {}
+        clients[id].connection = peer.connect(id)
     })
 
     x.on('close', () => {
-        clearTimeout(beat)
+        removeClient(id)
     })
 
     x.on('data', response => {
-        console.log(x.peer, response)
-        if (response.type === 'HEARTBEAT') { connections[x.peer].recieved = true; return }
+        console.log(id, response)
+        if (response.type === 'HEARTBEAT') { clients[id].recieved = true; return }
 
         let data = response.data        
         console.log(response)
 
         if (response.type === 'NICKNAME') {
             let nickname = data.nickname.trim()
-            let currentNames = Object.values(connections).map(e => e.nickname)
+            let currentNames = Object.values(clients).map(e => e.nickname)
             let _valid = !(currentNames.includes(nickname) || 
                         nickname.length < 3 || nickname.length > 16)
-            connections[x.peer].connection.send({ type: 'NICKNAME', data: { valid: _valid }})
+            clients[id].connection.send({ type: 'NICKNAME', data: { valid: _valid }})
             if (!_valid) return
             
-            connections[x.peer].nickname = nickname
+            clients[id].nickname = nickname
             let client = document.createElement('div')
             client.className = 'client'
             client.textContent = data.nickname
-            client.onclick = () => removeClient(x.peer)
+            client.onclick = () => removeClient(id)
 
             document.getElementById('client-container').appendChild(client)
             document.getElementsByClassName('next')[0].disabled = false
 
-            heartbeat(x.peer)
-            connections[x.peer].connection.send({ type: 'HEARTBEAT' })
+            heartbeat(id)
+            clients[id].connection.send({ type: 'HEARTBEAT' })
         }
 
         /* FIX */
@@ -57,7 +58,7 @@ peer.on('connection', x => {
                 if (!clientAnswers.includes(i)) { correct = false }
             }
 
-            connections[x.peer].correct = correct
+            clients[id].correct = correct
         }
     })
 })
@@ -65,12 +66,12 @@ peer.on('connection', x => {
 const responseTiem = 1000
 
 function heartbeat(id) {
-    connections[id].recieved = false
-    connections[id].heart = setTimeout(() => {
-        clearTimeout(connections[id].heart)
+    clients[id].recieved = false
+    clients[id].heart = setTimeout(() => {
+        clearTimeout(clients[id].heart)
 
-        if (connections[id].recieved) {
-            connections[id].connection.send({ type: 'HEARTBEAT' })
+        if (clients[id].recieved) {
+            clients[id].connection.send({ type: 'HEARTBEAT' })
             heartbeat(id)
         } else removeClient(id)
             
@@ -79,12 +80,13 @@ function heartbeat(id) {
 
 function removeClient(id) {
     for (let client of document.getElementsByClassName('client')) {
-        if (client.textContent === connections[id].nickname) { client.remove() }
+        if (client.textContent === clients[id].nickname) { client.remove() }
     }
 
-    connections[id].connection.close()
-    delete connections[id]
-    if (Object.values(connections).length === 0) { document.getElementsByClassName('next')[0].disabled = true }
+    clearTimeout(clients[id].heart)
+    clients[id].connection.close()
+    delete clients[id]
+    if (Object.values(clients).length === 0) { document.getElementsByClassName('next')[0].disabled = true }
 }
 
 function startGame(game) {
@@ -111,7 +113,7 @@ function handleQuestion() {
 
 
 function sendQuestion(qType, q, qAns) {
-    for (let connection of Object.values(connections)) {
+    for (let connection of Object.values(clients)) {
         connection.send({
             type: 'QUESTION',
             data: {
