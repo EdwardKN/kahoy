@@ -11,6 +11,7 @@ function showPreviewScreen() {
     let gameId = document.createElement('h1')
     gameId.id = 'game-id'
     gameId.textContent = 'Game pin: ' + peer.id
+    gameId.onclick = () => { navigator.clipboard.writeText(peer.id) }
 
     // Start, Lock
     let statusContainer = document.createElement('div')

@@ -1,6 +1,7 @@
 * {
     margin: 0;
     overflow: hidden;
+    user-select: none;
 }
 
 
@@ -15,6 +16,9 @@
 
 #game-id {
     text-align: center;
+    font-size: 4rem;
+    align-self: center;
+    cursor: pointer;
 }
 
 #status-container {
@@ -46,10 +50,13 @@
 }
 
 
-#clients-container {
+#client-container {
     display: grid;
-    grid-template-columns: 4;
-    grid-template-rows: 5;
+    padding: 100px;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-rows: repeat(auto-fill, minmax(100px, 1fr));
+    justify-items: center;
+    align-items: center;
 }
 
 .client {
