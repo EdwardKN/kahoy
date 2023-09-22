@@ -204,14 +204,17 @@ function init() {
 }
 
 function loadGames() {
-    let gamesToLoad = JSON.parse(localStorage.getItem("games"))
+    getData(function (values) {
+        console.log(values)
+        let gamesToLoad = JSON.parse(localStorage.getItem("games"))
 
-    gamesToLoad.forEach(e => {
-        let questions = [];
-        e.questions.forEach(g => {
-            questions.push(new Question(g.type, g.question, g.answers, g.rightAnswer))
+        gamesToLoad.forEach(e => {
+            let questions = [];
+            e.questions.forEach(g => {
+                questions.push(new Question(g.type, g.question, g.answers, g.rightAnswer))
+            })
+            games.push(new Game(e.name, questions));
         })
-        games.push(new Game(e.name, questions));
     })
 }
 
