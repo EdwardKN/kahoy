@@ -210,7 +210,6 @@ function loadGames() {
 
         let gamesToLoad = user?.games ? JSON.parse(decodeURIComponent(user.games)) : [];
         username = user.username;
-        console.log(user)
 
         gamesToLoad.forEach(e => {
             let questions = [];
