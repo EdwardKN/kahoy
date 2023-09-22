@@ -5,7 +5,7 @@ function showPreviewScreen() {
 
     // Main
     let mainContainer = document.createElement('div')
-    mainContainer.className = 'main-container'    
+    mainContainer.className = 'main-container'
 
     // Id
     let gameId = document.createElement('h1')
@@ -36,7 +36,7 @@ function showPreviewScreen() {
     start.className = 'next'
     start.textContent = 'Start'
     start.disabled = true
-    
+
     start.onclick = () => {
         console.log("Hi")
     }
@@ -53,7 +53,7 @@ function showPreviewScreen() {
     let amount = document.createElement('div')
     amount.id = 'amount-of-players'
     amount.textContent = '0'
-    
+
     let sound = document.createElement('button')
     sound.textContent = 'Sound'
 
@@ -64,8 +64,12 @@ function showPreviewScreen() {
     fullscreen.textContent = 'Fullscreen'
 
     fullscreen.onclick = () => {
-        if (!window.screenTop && !window.screenY) { document.exitFullscreen() }
-        else { document.requestFullscreeen(container) }
+        if (document.fullscreenElement != null) {
+            document.exitFullscreen()
+
+        } else {
+            document.documentElement.requestFullscreen()
+        }
     }
 
     settingsContainer.appendChild(amount)
