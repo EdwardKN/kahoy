@@ -5,13 +5,12 @@ let currentGame = undefined
 let idx = undefined
 let layout = 'LEADERBOARD'
 
-let currentNames = {}
-
 peer.on('connection', x => {
     x.on('open', () => {
         if (!currentGame || !document.getElementById('lock').state) return
         console.log(x.peer + ' connected')
-        connections[x.peer] = peer.connect(x.peer)
+        connections[x.peer] = {}
+        connections[x.peer].connection = peer.connect(x.peer)
     })
 
     x.on('close', () => {
@@ -19,23 +18,21 @@ peer.on('connection', x => {
     })
 
     x.on('data', response => {
-        if (response.type === 'HEARTBEAT') { recieved = true; return }
+        console.log(x.peer, response)
+        if (response.type === 'HEARTBEAT') { connections[x.peer].recieved = true; return }
 
         let data = response.data        
         console.log(response)
 
         if (response.type === 'NICKNAME') {
-            if (!beat) {
-                connections[x.peer].send({ type: 'HEARTBEAT' })
-                heartbeat(x.peer)
-            }
             let nickname = data.nickname.trim()
-            let _valid = !(Object.values(currentNames).includes(nickname) || 
+            let currentNames = Object.values(connections).map(e => e.nickname)
+            let _valid = !(currentNames.includes(nickname) || 
                         nickname.length < 3 || nickname.length > 16)
-            connections[x.peer].send({ type: 'NICKNAME', data: { valid: _valid }})
+            connections[x.peer].connection.send({ type: 'NICKNAME', data: { valid: _valid }})
             if (!_valid) return
             
-            currentNames[x.peer] = nickname
+            connections[x.peer].nickname = nickname
             let client = document.createElement('div')
             client.className = 'client'
             client.textContent = data.nickname
@@ -43,6 +40,9 @@ peer.on('connection', x => {
 
             document.getElementById('client-container').appendChild(client)
             document.getElementsByClassName('next')[0].disabled = false
+
+            heartbeat(x.peer)
+            connections[x.peer].connection.send({ type: 'HEARTBEAT' })
         }
 
         /* FIX */
@@ -63,16 +63,14 @@ peer.on('connection', x => {
 })
 
 const responseTiem = 1000
-let recieved = true
-let beat
 
 function heartbeat(id) {
-    recieved = false
-    beat = setTimeout(() => {
-        clearTimeout(beat)
+    connections[id].recieved = false
+    connections[id].heart = setTimeout(() => {
+        clearTimeout(connections[id].heart)
 
-        if (recieved) {
-            connections[id].send({ type: 'HEARTBEAT' })
+        if (connections[id].recieved) {
+            connections[id].connection.send({ type: 'HEARTBEAT' })
             heartbeat(id)
         } else removeClient(id)
             
@@ -81,18 +79,16 @@ function heartbeat(id) {
 
 function removeClient(id) {
     for (let client of document.getElementsByClassName('client')) {
-        if (client.textContent === currentNames[id]) { client.remove() }
+        if (client.textContent === connections[id].nickname) { client.remove() }
     }
 
-    connections[id].close()
-    delete currentNames[id]
+    connections[id].connection.close()
     delete connections[id]
     if (Object.values(connections).length === 0) { document.getElementsByClassName('next')[0].disabled = true }
 }
 
 function startGame(game) {
     currentGame = game
-    currentNames = []
     idx = 0
 
     showPreviewScreen()
