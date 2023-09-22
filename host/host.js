@@ -45,6 +45,7 @@ peer.on('connection', x => {
             document.getElementsByClassName('next')[0].disabled = false
         }
 
+        /* FIX */
         if (response.type === 'ANSWER') {
             let clientAnswers = data.answer
             let correctAnswers = []
@@ -89,7 +90,6 @@ function removeClient(id) {
     if (Object.values(connections).length === 0) { document.getElementsByClassName('next')[0].disabled = true }
 }
 
-
 function startGame(game) {
     currentGame = game
     currentNames = []
@@ -98,7 +98,7 @@ function startGame(game) {
     showPreviewScreen()
 }
 
-
+/* FIX */
 
 
 function showQuestion() {
