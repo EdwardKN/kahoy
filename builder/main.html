@@ -3,13 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Create Your Own Kahoy!</title>
+
+    <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
-    <button onclick="window.location.replace('../main/main.html');" style="z-index: 5; position: relative;">Main</button>
+    <container id="maincontainer">
+        <button onclick="window.location.replace('../main/main.html');" style="z-index: 5; position: relative;">Main</button>
+        <button onclick="save()" style="z-index: 5; position: relative;">Save</button>
+    </container>
     
+
+    <script src="../sharedfunctions.js"></script>
     <script src="../libraries/prune.js"></script>
     <script src="main.js"></script>
+    <script src="css.js"></script>
     
 </body>
 </html>
