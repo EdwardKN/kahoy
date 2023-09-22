@@ -18,8 +18,9 @@ function signUp() {
                     username: username,
                     password: CryptoJS.MD5(password).toString(),
                     email: email
+                },function(){
+                    login(username,password);
                 });
-                window.location.replace('../main/main.html');
             };
         });
     } else {
@@ -27,13 +28,14 @@ function signUp() {
     };
 };
 
-function login() {
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
+function login(username,password) {
+    let loginUsername = username ? username : document.getElementById("username").value;
+    let loginPassword = password ? password : document.getElementById("password").value;
+
     getData(function (users) {
-        let user = users.filter(e => e.username == username)[0];
-        if (user.password == CryptoJS.MD5(CryptoJS.MD5(password).toString()).toString()) {
-            sendSession(username);
+        let user = users.filter(e => e.username == loginUsername)[0];
+        if (user?.password == CryptoJS.MD5(CryptoJS.MD5(loginPassword).toString()).toString()) {
+            sendSession(loginUsername);
         };
     });
 };

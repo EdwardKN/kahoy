@@ -3,6 +3,8 @@ var gameButtons = [];
 var currentEditingGame = undefined;
 var questionButtons = [];
 
+var username = undefined;
+
 const questionTypes = ["Single answer", "Multiple choice"]
 
 function init() {
@@ -204,9 +206,10 @@ function init() {
 }
 
 function loadGames() {
-    getData(function (values) {
-        console.log(values)
-        let gamesToLoad = JSON.parse(localStorage.getItem("games"))
+    getUser(function(user){
+
+        let gamesToLoad = user?.games ? JSON.parse(decodeURIComponent(user.games)) : [];
+        username = user.username;
 
         gamesToLoad.forEach(e => {
             let questions = [];
@@ -215,6 +218,7 @@ function loadGames() {
             })
             games.push(new Game(e.name, questions));
         })
+        init()
     })
 }
 
@@ -240,10 +244,12 @@ class Question {
     }
 }
 
-window.onbeforeunload = function (e) {
-
-    localStorage.setItem("games", JSON.prune(games));
-    e.preventDefault();
+function save(){
+    sendData({
+        username:username,
+        games:encodeURIComponent(JSON.prune(games))
+    }) 
 }
+
 loadGames();
 init();

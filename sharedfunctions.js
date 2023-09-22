@@ -1,8 +1,8 @@
-function sendData(item) {
+function sendData(item,callback) {
+    console.log(item)
     const http = new XMLHttpRequest();
     let url = "https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/updatekahoyusers?";
     Object.entries(item).forEach(e => {
-        console.log(e)
         url += e[0] + "=" + e[1] + "&";
     })
 
@@ -12,7 +12,7 @@ function sendData(item) {
 
     http.onreadystatechange = (e) => {
         if (http.readyState === 4) {
-            console.log(e.responseText)
+            callback()
         }
     };
 };
@@ -41,3 +41,12 @@ function getSessions(callback) {
         }
     };
 };
+
+function getUser(callback){
+    getSessions(e => {
+        getData(h => {
+            callback(h.filter(j => j.username == (e.filter(g => g.session == localStorage.getItem("session"))[0].username))[0]);
+        })
+    })
+   
+}
