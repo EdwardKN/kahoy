@@ -1,5 +1,4 @@
-function sendData(item,callback) {
-    console.log(item)
+function sendData(item, callback) {
     const http = new XMLHttpRequest();
     let url = "https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/updatekahoyusers?";
     Object.entries(item).forEach(e => {
@@ -12,13 +11,13 @@ function sendData(item,callback) {
 
     http.onreadystatechange = (e) => {
         if (http.readyState === 4) {
-            callback()
+            callback(http.responseText)
         }
     };
 };
-function getData(callback) {
+function getUser(callback) {
     const http = new XMLHttpRequest();
-    const url = `https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/getkahoyusers`;
+    const url = `https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/getkahoyusers?session=${localStorage.getItem('session')}`;
     http.open("GET", url);
     http.send();
 
@@ -29,9 +28,9 @@ function getData(callback) {
     };
 };
 
-function getSessions(callback) {
+function checkPassword(username, password, callback) {
     const http = new XMLHttpRequest();
-    const url = `https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/getkahoysessions`;
+    const url = `https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/getkahoyusers?username=${username}&password=${password}`;
     http.open("GET", url);
     http.send();
 
@@ -42,11 +41,3 @@ function getSessions(callback) {
     };
 };
 
-function getUser(callback){
-    getSessions(e => {
-        getData(h => {
-            callback(h.filter(j => j.username == (e.filter(g => g.session == localStorage.getItem("session"))[0].username))[0]);
-        })
-    })
-   
-}

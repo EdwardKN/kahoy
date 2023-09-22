@@ -206,10 +206,11 @@ function init() {
 }
 
 function loadGames() {
-    getUser(function(user){
+    getUser(function (user) {
 
         let gamesToLoad = user?.games ? JSON.parse(decodeURIComponent(user.games)) : [];
         username = user.username;
+        console.log(user)
 
         gamesToLoad.forEach(e => {
             let questions = [];
@@ -244,11 +245,11 @@ class Question {
     }
 }
 
-function save(){
+function save() {
     sendData({
-        username:username,
-        games:encodeURIComponent(JSON.prune(games))
-    }) 
+        username: username,
+        games: encodeURIComponent(JSON.prune(games))
+    })
 }
 
 loadGames();

@@ -9,50 +9,33 @@ function signUp() {
     let password2 = document.getElementById("password2").value;
 
     if (password == password2) {
-        getData(function (users) {
-            let notOkUsers = users.filter(e => (e.username == username || e.email == email))
-            if (notOkUsers.length > 0) {
-                alert("Same username or email is used by another account");
+        sendData({
+            username: username,
+            password: CryptoJS.MD5(password).toString(),
+            email: email,
+            signUp: true
+        }, function (e) {
+            if (e) {
+                login(username, password);
             } else {
-                sendData({
-                    username: username,
-                    password: CryptoJS.MD5(password).toString(),
-                    email: email
-                },function(){
-                    login(username,password);
-                });
-            };
+                alert("Same username or email is used by another account");
+            }
         });
     } else {
         alert("Passwords are not the same!");
     };
 };
 
-function login(username,password) {
+function login(username, password) {
     let loginUsername = username ? username : document.getElementById("username").value;
     let loginPassword = password ? password : document.getElementById("password").value;
 
-    getData(function (users) {
-        let user = users.filter(e => e.username == loginUsername)[0];
-        if (user?.password == CryptoJS.MD5(CryptoJS.MD5(loginPassword).toString()).toString()) {
-            sendSession(loginUsername);
-        };
-    });
-};
-
-function sendSession(username) {
-    const http = new XMLHttpRequest();
-    let session = CryptoJS.MD5((Math.random() * 100000000000));
-    let url = "https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/sendkahoysession?session=" + session + "&username=" + username;
-
-    http.open("GET", url);
-    http.send();
-
-
-    http.onreadystatechange = (e) => {
-        if (http.readyState === 4) {
-            localStorage.setItem("session", session);
+    checkPassword(loginUsername, CryptoJS.MD5(CryptoJS.MD5(loginPassword).toString()).toString(), function (e) {
+        if (e) {
+            localStorage.setItem("session", e);
             window.location.replace('../main/main.html');
-        };
-    };
-}
+        } else {
+            alert("Wrong username or password")
+        }
+    })
+};
