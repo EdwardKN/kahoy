@@ -10,7 +10,9 @@ container{
     margin-bottom: 50px;
     border-radius: 25px;
 }
-
+#maincontainer{
+  justify-content: left;
+}
 #gameselectorContainer{
     justify-content:left;
 
