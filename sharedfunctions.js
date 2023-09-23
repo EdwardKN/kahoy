@@ -28,6 +28,19 @@ function getUser(callback) {
     };
 };
 
+function getPublicGames(callback){
+    const http = new XMLHttpRequest();
+    const url = `https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/getkahoyusers?getpublic=true`;
+    http.open("GET", url);
+    http.send();
+
+    http.onreadystatechange = (e) => {
+        if (http.readyState === 4) {
+            callback(JSON.parse(http.responseText));
+        }
+    };
+}
+
 function checkPassword(username, password, callback) {
     const http = new XMLHttpRequest();
     const url = `https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/getkahoyusers?username=${username}&password=${password}`;
@@ -40,4 +53,3 @@ function checkPassword(username, password, callback) {
         }
     };
 };
-

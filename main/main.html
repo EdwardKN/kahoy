@@ -4,13 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
-    <button onclick="window.location.replace('../client/client.html');" style="z-index: 5; position: relative;">Join game</button>
-    <button onclick="window.location.replace('../host/host.html');" style="z-index: 5; position: relative;" id="host">Host game</button>
-    <button onclick="window.location.replace('../builder/main.html');" style="z-index: 5; position: relative;" id="create">Create your own game</button>
-    <button onclick="window.location.replace('../login/index.html');" style="z-index: 5; position: relative;" id="login">Login</button>
-    <button onclick="window.location.replace('../login/create.html');" style="z-index: 5; position: relative;" id="signUp">Sign Up</button>
+    <div class="topBar">
+        <container class="topContainer">
+            <button style="display: block" onclick="window.location.replace('../client/client.html');" style="z-index: 5; position: relative;">Join game</button>
+            <button onclick="window.location.replace('../builder/main.html');" style="z-index: 5; position: relative;" id="create">Your games</button>
+        </container>
+        <container class="accountContainer">
+            <button style="display: block" onclick="window.location.replace('../login/index.html');" style="z-index: 5; position: relative;" id="login">Login</button>
+            <button onclick="window.location.replace('../login/create.html');" style="z-index: 5; position: relative;" id="signUp">Sign Up</button>
+        </container>
+        <container class="logoContainer">
+            <img src="../logo.png">
+        </container>
+    </div>
+    <div class="topBar">
+        <h1>Public Games</h1>
+        <contatiner id="searchContainer"></contatiner>
+    </div>
+    <div class="topBar">
+        <contatiner id="gameContainer"></contatiner>
+    </div>
+
+    <script src="../sharedfunctions.js"></script>
     <script src="checkLogin.js"></script>
+    <script src="loadPublicGames.js"></script>
 </body>
 </html>

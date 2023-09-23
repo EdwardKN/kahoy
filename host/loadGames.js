@@ -1,13 +1,14 @@
-getUser(function(user){
-    let games = user?.games ? JSON.parse(decodeURIComponent(user.games)) : [];
+const urlSearchParams = new URLSearchParams(window.location.search);
+const params = Object.fromEntries(urlSearchParams.entries());
+if(params?.private){
+    getUser(function (user) {
 
-    games.forEach(e => {
-        let tmpButton = document.createElement("button");
-    
-        tmpButton.innerText = e.name;
-    
-        document.body.appendChild(tmpButton);
+        let gamesFromUser = JSON.parse(decodeURIComponent(user.games));
+
+        let gameToStart = gamesFromUser[JSON.parse(params.id)];
     })
-})
-
-
+}else if(params?.public){
+    getPublicGames(function(games){
+        let gameToStart = games[params.id];
+    })
+}
