@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="preview.css">
+    <title>Kahoy</title>
+</head>
+<body>
+    <main class="main-container">
+        <header class="game-pin-container">
+            <h1 id="game-pin-text">Game Pin: <div id="game-pin"></div></h1>
+        </header>
+
+        <div id="lock-start-container">
+            <div id="lock-start-wrapper">
+                <img id="lock" src="imgs/open-lock.png">
+                <button class="next" type="button">Start</button>
+            </div>
+        </div>
+
+        <div id="client-container"></div>
+
+        <div id="settings-container">
+            <div id="amount-of-players">0</div>
+            <div>Sound</div>
+            <div>Settings</div>
+            <div id="fullscreen">Fullscreen</div>
+        </div>
+    </main>
+    
+    <script>
+        let gamePin = document.getElementById('game-pin')
+        gamePin.textContent = peer.id
+        gamePin.onclick = () => { navigator.clipboard.writeText(peer.id) }
+
+        let lock = document.getElementById('lock')
+        lock.state = true
+        lock.onclick = () => {
+            if (lock.state) {
+                lock.src = 'imgs/closed-lock.png'
+            } else if (!lock.state) {
+                lock.src = 'imgs/open-lock.png'
+            }
+            lock.state = !lock.state
+        }
+
+        let start = document.getElementsByClassName('next')[0]
+        start.disabled = true
+        start.onclick = () => sendQuestion()
+
+        /* WAITING FOR PLAYERS HAS NOT BEEN IMPLEMENTED */
+        
+        document.getElementById('fullscreen')
+
+        fullscreen.onclick = () => {
+            if (document.fullscreen) {
+                document.exitFullscreen()
+            } else document.documentElement.requestFullscreen()
+        }
+    </script>
+</body>
+</html>

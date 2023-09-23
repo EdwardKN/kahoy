@@ -10,19 +10,19 @@ peer.on('connection', x => {
     x.on('open', () => {
         if (!currentGame || !document.getElementById('lock').state) return
         console.log(id + ' connected')
-        clients[id] = {}
-        clients[id].connection = peer.connect(id)
+        clients[id] = {
+            connection: peer.connect(id)
+        }
     })
 
     x.on('close', () => {
-        removeClient(id)
+        if (clients[id]) removeClient(id)
     })
 
     x.on('data', response => {
-        console.log(id, response)
         if (response.type === 'HEARTBEAT') { clients[id].recieved = true; return }
 
-        let data = response.data        
+        let data = response.data
         console.log(response)
 
         if (response.type === 'NICKNAME') {
@@ -46,6 +46,7 @@ peer.on('connection', x => {
             clients[id].connection.send({ type: 'HEARTBEAT' })
         }
 
+        
         /* FIX */
         if (response.type === 'ANSWER') {
             let clientAnswers = data.answer
@@ -68,13 +69,13 @@ const responseTiem = 1000
 function heartbeat(id) {
     clients[id].recieved = false
     clients[id].heart = setTimeout(() => {
-        clearTimeout(clients[id].heart)
-
         if (clients[id].recieved) {
             clients[id].connection.send({ type: 'HEARTBEAT' })
             heartbeat(id)
-        } else removeClient(id)
-            
+        } else {
+            clearTimeout(clients[id].heart)
+            removeClient(id)
+        }
     }, responseTiem)
 }
 
@@ -83,44 +84,41 @@ function removeClient(id) {
         if (client.textContent === clients[id].nickname) { client.remove() }
     }
 
-    clearTimeout(clients[id].heart)
     clients[id].connection.close()
     delete clients[id]
     if (Object.values(clients).length === 0) { document.getElementsByClassName('next')[0].disabled = true }
+}
+
+function sendMessage(data) {
+    for (const client of Object.values(clients)) {
+        console.log(client)
+        client.connection.send(data)
+    }
 }
 
 function startGame(game) {
     currentGame = game
     idx = 0
 
-    showPreviewScreen()
-}
-
-/* FIX */
-
-
-function showQuestion() {
-    let container = document.createElement('main')
-    container.className = 'main-container'
-
-}
-
-function handleQuestion() {
-    let question = currentGame.questions[idx]
-
-    sendQuestion(question.type, question.question, question.answers)
+    fetchHTML(document, 'preview.html')
 }
 
 
-function sendQuestion(qType, q, qAns) {
-    for (let connection of Object.values(clients)) {
-        connection.send({
-            type: 'QUESTION',
-            data: {
-                questionType: qType,
-                question: q,
-                alternatives: qAns.map(e => e.text)
-            }
-        })
-    }
+function sendQuestion() {
+    let data = currentGame.questions[idx]
+
+    sendMessage({
+        type: 'QUESTION',
+        data: {
+            questionType: data.type,
+            question: data.question,
+            alternatives: data.answers.map(e => e.text)
+        }
+    })
+
+    showQuestion()
 }
+
+/*
+startGame(games[0])
+showQuestion(currentGame.questions[idx].question, currentGame.questions[idx].answers.map(e => e.text), currentGame.questions[idx].time || 10)*/

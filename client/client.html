@@ -14,7 +14,7 @@
 <body>
     <main class="main-container">
         <button id="main-menu" onclick="window.location.replace('../main/main.html');">Meny</button>
-        <div id="form-wrapper">
+        <div id="form-wrapper" onclick="fetchHTML(document, '../host/host.html')">
             <form class="enter-pin-form">
                 <input id="game-input" type="text" placeholder="Pinkod" spellcheck="false" autocomplete="off">
                 <button id="enter-pin" type="button" onclick="connectToHost(gameInput.value)">Gå med</button>

@@ -4,7 +4,12 @@
     user-select: none;
 }
 
+.red { background-color: rgb(230, 0, 0) }
+.blue { background-color: rgb(40, 0, 220) }
+.orange { background-color: rgb(255, 165, 0) }
+.green { background-color: rgb(0, 200, 0) }
 
+/* Join screen */
 .main-container {
     position: absolute;
     width: 100%;
@@ -14,57 +19,34 @@
     grid-template-rows: 1fr 1fr 7fr 1fr;
 }
 
-#game-id {
-    text-align: center;
-    font-size: 4rem;
-    align-self: center;
-    cursor: pointer;
+/* Question */
+
+.question-text {
+
 }
 
-#status-container {
+.time-next-container {
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
 }
 
-#lock-start {
-    display: flex;
-    align-self: center;
-    gap: 5px;
-    margin-right: 20px;
-    & > * { cursor: pointer; }
-}
-
-#lock {
-    padding: 5px;
-    border: 2px solid lightgrey;
-    border-radius: 5px;
-    width: 20px;
-}
-
-#settings-container {
-    display: flex;
-    justify-content: right;
-
-    & > input { all: unset; height: fit-content; background-color: rgba(60, 60, 60, 150); border: 2px solid black; cursor: pointer; }
-    & > button { all: unset; height: fit-content; background-color: rgba(60, 60, 60, 150); border: 2px solid black; cursor: pointer; }
-}
-
-
-#client-container {
+.answer-container {
     display: grid;
-    padding: 100px;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    grid-template-rows: repeat(auto-fill, minmax(100px, 1fr));
-    justify-items: center;
-    align-items: center;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(auto-fill, 1fr);
 }
 
-.client {
-    background-color: rgb(200, 200, 200);
-    width: fit-content;
-    height: fit-content;
-    padding: 10px;
-    text-align: center;
-    border-radius: 10px;
-    cursor: pointer;
+.answer {
+
+}
+
+#timer {
+    display: flex;
+    width: 100px;
+    aspect-ratio: 1;
+    font-size: 3rem;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid black;
+    border-radius: 50%;
 }

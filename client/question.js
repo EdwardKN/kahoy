@@ -1,4 +1,6 @@
-const colors = ['red', 'blue', 'yellow', 'orange', 'purple', 'pink']
+function handleQuestion(data) {
+    if (data.type === 'Single answer') singleAnswer(data.question, data.answers)
+}
 
 function trueOrFalse() {
 

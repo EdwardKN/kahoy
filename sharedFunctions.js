@@ -1,5 +1,5 @@
 const questionTypes = ["Single answer", "Multiple choice"]
-
+const colors = ['red', 'blue', 'orange', 'green']
 
 function generateId(length) {
     const ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -19,4 +19,25 @@ function shuffle(arr) {
         arr[j] = temp
     }
     return arr
+}
+
+function fetchHTML(document, url) {    
+    fetch(url)
+        .then(response => response.text())
+        .then(html => {
+
+            const parser = new DOMParser()
+            const newDoc = parser.parseFromString(html, 'text/html')
+            const script = newDoc.querySelector('script')
+
+            document.body.innerHTML = newDoc.body.innerHTML
+            document.head.innerHTML = newDoc.head.innerHTML
+
+            if (!script) return
+            
+            let newScript = document.createElement('script')
+            newScript.textContent = script.textContent
+            document.body.appendChild(newScript)
+        })
+        .catch(error => console.error('Error loading content: ' + error))
 }
