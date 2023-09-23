@@ -43,7 +43,7 @@ function showGames(key){
             gameDiv.appendChild(gameName)
     
             let playButton = document.createElement("button")
-            playButton.textContent = "Start Game"
+            playButton.textContent = "Host Game"
     
             playButton.onclick = function(){
                 window.location.replace('../host/host.html?game=' +encodeURIComponent(JSON.prune(e)));
