@@ -73,9 +73,9 @@ function init() {
         let privateGame = document.createElement("button");
         privateGame.id = "privateGame";
         privateGame.innerText = currentEditingGame.private ? "Private" : "Public";
-    
-        
-        privateGame.onclick = function(){
+
+
+        privateGame.onclick = function () {
             currentEditingGame.private = !currentEditingGame.private
             init();
         }
@@ -84,11 +84,17 @@ function init() {
 
         let playGame = document.createElement("button");
         playGame.id = "playGame";
-        playGame.innerText = "Play Game"
-    
-        playGame.onclick = function(){
-            window.location.replace('../host/host.html?private=true&id=' + currentEditingGame.id);
+        playGame.innerText = "Host Game"
+
+        playGame.onclick = function () {
+            save();
+            localStorage.setItem('gameToStart', JSON.prune(currentEditingGame));
+            window.location.replace('../host/host.html');
         }
+
+        let tmp = currentEditingGame.questions.filter(g => (g.question != '' && g.answers.length > 1))
+        console.log(tmp)
+        playGame.disabled = !(tmp?.length > 0);
 
         currentGameContainer.appendChild(playGame);
 
@@ -123,8 +129,8 @@ function init() {
             questionListContainer.appendChild(questionButtons[i]);
         })
 
-        if(currentEditingGame.currentSelectedQuestion !== undefined){
-            
+        if (currentEditingGame.currentSelectedQuestion !== undefined) {
+
             let tmpDiv = document.createElement("div");
 
             let typebutton = document.createElement("select");
@@ -249,14 +255,14 @@ function loadGames() {
             })
             console.log(e)
 
-            games.push(new Game(e.name, questions,e?.private));
+            games.push(new Game(e.name, questions, e?.private));
         })
         init()
     })
 }
 
 class Game {
-    constructor(name, questions,privateGame) {
+    constructor(name, questions, privateGame) {
         this.questions = questions ? questions : [new Question()];
         this.id = games.length;
         this.name = name ? name : "Game " + (this.id + 1)
@@ -286,8 +292,8 @@ function save() {
     window.onbeforeunload = null;
 }
 
-function notSaved(){
-    window.onbeforeunload = function() {
+function notSaved() {
+    window.onbeforeunload = function () {
         return true;
     };
 }
