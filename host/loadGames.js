@@ -7,8 +7,6 @@ if(params?.private){
 
         let gameToStart = gamesFromUser[JSON.parse(params.id)];
     })
-}else if(params?.public){
-    getPublicGames(function(games){
-        let gameToStart = games[params.id];
-    })
+}else if(params?.game){
+    let gameToStart = JSON.parse(params.game)
 }
