@@ -2,12 +2,14 @@ var games = [];
 var gameButtons = [];
 var currentEditingGame = undefined;
 var questionButtons = [];
+var saved = true;
 
 var username = undefined;
 
 const questionTypes = ["Single answer", "Multiple choice"]
 
 function init() {
+    notSaved();
     document.getElementById("gameselectorContainer")?.remove();
     document.getElementById("currentGameContainer")?.remove();
     document.getElementById("questionListContainer")?.remove();
@@ -281,6 +283,13 @@ function save() {
         username: username,
         games: encodeURIComponent(JSON.prune(games))
     })
+    window.onbeforeunload = null;
+}
+
+function notSaved(){
+    window.onbeforeunload = function() {
+        return true;
+    };
 }
 
 loadGames();
