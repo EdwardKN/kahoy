@@ -165,6 +165,7 @@ function init() {
             currentQuestion.id = "currentQuestion";
             currentQuestion.value = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question : "";
             currentQuestion.placeholder = "Write your question here";
+            currentQuestion.maxLength = 50;
             currentQuestion.onchange = function () {
                 currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question = currentQuestion.value;
             }
@@ -219,18 +220,10 @@ function init() {
                     let rightAnswer = document.createElement("input")
                     rightAnswer.id = "rightAnswer" + b;
                     rightAnswer.name = "rightAnswer";
-                    if (currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type == questionTypes[0]) {
-                        rightAnswer.type = "radio";
-                        rightAnswer.checked = (b == currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].rightAnswer)
-                        rightAnswer.onchange = function () {
-                            currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].rightAnswer = b;
-                        }
-                    } else {
-                        rightAnswer.checked = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].rightAnswer ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].rightAnswer : false
-                        rightAnswer.type = "checkbox";
-                        rightAnswer.onchange = function () {
-                            currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].rightAnswer = rightAnswer.checked;
-                        }
+                    rightAnswer.type = ((currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type == questionTypes[0]) ? "radio" : "checkbox")
+                    rightAnswer.checked = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].rightAnswer ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].rightAnswer : false
+                    rightAnswer.onchange = function () {
+                        currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].rightAnswer = rightAnswer.checked;
                     }
 
                     answerContainer.appendChild(rightAnswer);

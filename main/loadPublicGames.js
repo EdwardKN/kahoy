@@ -114,6 +114,26 @@ function viewQuestion(game){
         let div = document.createElement("div");
 
         div.textContent = e.question;
+        div.className = "questionDiv"
+
+        div.onclick = function(){
+            div.selected = !div.selected;
+
+            if(div.selected){
+                div.style.height = (e.answers.length * 50 + 40) + "px"
+                Array.from(div.children).forEach(e => {if(e.nodeName == "A"){e.remove()}});
+                e.answers.forEach(e =>{
+                    let tmp = document.createElement("a");
+                    tmp.textContent = e.text + (e.rightAnswer ? "✔️" : "❌");
+                    tmp.className = "answer"
+
+                    div.appendChild(tmp);
+                })
+            }else{
+                Array.from(div.children).forEach(e => {if(e.nodeName == "A"){e.remove()}});
+                div.style.height = "40px"
+            }
+        }
 
         questionContainer.appendChild(div)
     })
