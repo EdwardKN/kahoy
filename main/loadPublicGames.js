@@ -20,6 +20,7 @@ searchButton.onclick = function () {
 document.getElementById("searchContainer").appendChild(searchButton);
 
 var games = [];
+var viewingQuestion = undefined;
 
 getPublicGames(function (gamesToShow) {
     gamesToShow.forEach(e => {
@@ -55,9 +56,17 @@ function showGames(key) {
             let viewQuestions = document.createElement("button")
             viewQuestions.textContent = "View Questions"
             viewQuestions.id = "viewQuestions"
+            viewQuestions.className = "viewQuestions"
 
             viewQuestions.onclick = function () {
-
+                if(viewingQuestion != e){
+                    viewQuestion(e);
+                    viewQuestions.textContent = "Hide Questions"
+                } else{
+                    closeQuestion()
+                    viewQuestions.textContent = "View Questions"
+                }
+                
             }
             gameDiv.appendChild(viewQuestions);
 
@@ -65,4 +74,55 @@ function showGames(key) {
             document.getElementById("gameContainer").appendChild(gameDiv);
         }
     });
+}
+
+function viewQuestion(game){
+    closeQuestion();
+    viewingQuestion = game;
+
+    document.getElementById("gameBar").style.width = "calc(50% - 60px)";
+
+    let questionDiv = document.createElement("div");
+
+    questionDiv.id = "questionDiv";
+    questionDiv.className = "topBar";
+
+
+    
+    document.body.appendChild(questionDiv)
+
+    let questionContainer = document.createElement("container");
+
+    questionContainer.id = "questionContainer";
+    
+    questionDiv.appendChild(questionContainer)
+
+    let headerDiv = document.createElement("div");
+
+    headerDiv.style.height = "100px"
+
+
+    questionContainer.appendChild(headerDiv)
+
+    let header =  document.createElement("h1");
+
+    header.textContent = "Questions";
+
+    headerDiv.appendChild(header)
+
+    game.questions.forEach(e =>{
+        let div = document.createElement("div");
+
+        div.textContent = e.question;
+
+        questionContainer.appendChild(div)
+    })
+}
+
+function closeQuestion(){    
+    viewingQuestion = undefined;
+    Array.from(document.getElementsByClassName("viewQuestions")).forEach(e => e.textContent = "View Questions");
+
+    document.getElementById("gameBar").style.width = "calc(100% - 60px)";
+    document.getElementById("questionDiv")?.remove()
 }

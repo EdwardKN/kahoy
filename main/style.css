@@ -21,7 +21,7 @@ img{
     padding: 0;
 }
 .topBar{
-    display:flex;
+    display:inline-flex;
     width: calc(100% - 40px);    
     background-color: #381272;
     margin-left: 10px;
@@ -29,6 +29,16 @@ img{
     padding: 10px;
     border-radius: 15px;
     border-bottom: #210b42 solid 10px;
+}
+
+#questionDiv{
+  width: calc(50% - 60px);    
+  margin-right: 10px;
+  margin-left: 50px;
+  margin-top: 10px;
+  position: relative;
+  flex-direction: row;
+  position: absolute;
 }
 
 #searchContainer{
@@ -75,6 +85,7 @@ h1{
     border-radius: 25px;
     border-bottom: gray solid 8px;
 }
+
 .game h2{
     width: 100%;
     text-align: center;
