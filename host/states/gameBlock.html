@@ -1,0 +1,25 @@
+<head>
+    <link rel="stylesheet" href="gameBlock.css">
+</head>
+<body>
+    <main class="main-container">
+        <header id="question-text">This is a question</header>
+        <div id="interface-container">
+            <div id="timer">60</div>
+            <button class="next" onclick="fetchHTML(document, 'showAnswers.html', 'states/')">Next</button>
+        </div>
+        <div id="alternatives-container"></div>
+    </main>
+
+    <script>
+        let timer = document.getElementById('timer')
+        let clock = setInterval(() => {
+            let time = parseInt(timer.textContent) - 1
+            if (time > 0) { timer.textContent = time; return }
+            fetchHTML(document, 'preview.html', 'states/')
+            clearInterval(clock)
+        }, 1000)
+    </script>
+    <script src="sharedFunctions.js"></script>
+</body>
+</html>

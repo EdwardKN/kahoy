@@ -4,11 +4,6 @@
     user-select: none;
 }
 
-.red { background-color: rgb(230, 0, 0) }
-.blue { background-color: rgb(40, 0, 220) }
-.orange { background-color: rgb(255, 165, 0) }
-.green { background-color: rgb(0, 200, 0) }
-
 /* Join screen */
 .main-container {
     position: absolute;

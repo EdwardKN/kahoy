@@ -1,9 +1,10 @@
 const peer = new Peer(generateId(6), { debug: 1 } )
-let clients = {}
+const responseTiem = 1000
 
+let clients = {}
 let currentGame = undefined
 let idx = undefined
-let layout = 'LEADERBOARD'
+let clientsAnswers = 0
 
 peer.on('connection', x => {
     let id = x.peer
@@ -47,24 +48,36 @@ peer.on('connection', x => {
         }
 
         
-        /* FIX */
         if (response.type === 'ANSWER') {
-            let clientAnswers = data.answer
-            let correctAnswers = []
-            currentGame.questions[idx].answers.forEach((answer, i) => { if (answer.rightAnswer) { correctAnswers.push(i) }})
+            clientsAnswers++
+            clients[x.peer].correctAnswer = validateAnswer(data.answer)
 
-            let correct = clientAnswers.length === correctAnswers.length
-            
-            for (let i of correctAnswers) {
-                if (!clientAnswers.includes(i)) { correct = false }
-            }
+            if (clientsAnswers !== Object.keys(clients).length) return
 
-            clients[id].correct = correct
+            fetchHTML(document, 'showAnswers.html', 'states/')
+
+            Object.values(clients).forEach(client => {
+                client.connection.send({
+                    type: 'IS_CORRECT',
+                    correct: client.correctAnswer
+                })
+            })
         }
     })
 })
 
-const responseTiem = 1000
+function validateAnswer(answer) {
+    let correctAnswers = []
+    currentGame.questions[idx].answers.forEach((ans, i) => { if (ans.rightAnswer) { correctAnswers.push(i) } })
+
+    if (correctAnswers.length !== answer.length) return false
+
+    for (let i of correctAnswers) {
+        if (!answer.includes(i)) return false
+    }
+
+    return true
+}
 
 function heartbeat(id) {
     clients[id].recieved = false
@@ -91,7 +104,6 @@ function removeClient(id) {
 
 function sendMessage(data) {
     for (const client of Object.values(clients)) {
-        console.log(client)
         client.connection.send(data)
     }
 }
@@ -100,25 +112,22 @@ function startGame(game) {
     currentGame = game
     idx = 0
 
-    fetchHTML(document, 'preview.html')
+    fetchHTML(document, 'preview.html', 'states/')
 }
 
-
-function sendQuestion() {
+async function sendQuestion() {
     let data = currentGame.questions[idx]
+    let answers = data.answers.map(e => e.text)
 
     sendMessage({
         type: 'QUESTION',
         data: {
             questionType: data.type,
             question: data.question,
-            alternatives: data.answers.map(e => e.text)
+            alternatives: answers
         }
     })
 
-    showQuestion()
+    await fetchHTML(document, 'gameBlock.html', 'states/')
+    createAlternative(document.getElementById('alternatives-container'), answers)
 }
-
-/*
-startGame(games[0])
-showQuestion(currentGame.questions[idx].question, currentGame.questions[idx].answers.map(e => e.text), currentGame.questions[idx].time || 10)*/

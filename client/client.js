@@ -44,9 +44,7 @@ peer.on('connection', x => {
             }
         }
 
-        if (response.type === 'QUESTION') {
-            if (data.questionType === 'Single answer') singleAnswer(data.question, data.alternatives)
-        }
+        if (response.type === 'QUESTION') handleQuestion(data)
 
         if (response.type === 'ISCORRECT') {
             let result = document.createElement('div')

@@ -1,43 +1,25 @@
-function handleQuestion(data) {
-    if (data.type === 'Single answer') singleAnswer(data.question, data.answers)
+async function handleQuestion(data) {
+    await fetchHTML(document, 'gameBlock.html', '../host/states/')
+    createAlternative(document.getElementById('alternatives-container'), data.alternatives, true)
+
+    let interface = document.getElementById('interface-container')
+    interface.removeAttribute('id')
+    for (let child of interface.children) child.remove()
+
+    if (data.questionType === 'Single answer') singleAnswer(data)
 }
 
-function trueOrFalse() {
-
-}
-
-function singleAnswer(question, alternatives) {
-    let container = document.createElement('main')
-    container.className = 'question-container'
-
-    let header = document.createElement('h1')
-    header.textContent = question
-
-    let alternativesContainer = document.createElement('div')
-    alternativesContainer.className = 'alternatives-container' 
-
-    for (let i = 0; i < alternatives.length; i++) {
-        let alternative = document.createElement('button')
-        alternative.className = 'alternative'
-        alternative.textContent = alternatives[i]
-        alternative.style.backgroundColor = colors[i]
+function singleAnswer() {
+    for (let alternative of document.getElementsByClassName('alternative')) {
         alternative.onclick = () => {
             connection.send({
                 type: 'ANSWER',
-                data: {
-                    questionType: 'Single answer',
-                    answer: [i]
-                }
+                data: { answer: [alternative.getAttribute('index')] }
             })
-            document.body.removeChild(container)
+
+            fetchHTML(document, 'clientCorrectAnswer.html', '../host/states/')
         }
-
-        alternativesContainer.appendChild(alternative)
     }
-
-    container.appendChild(header)
-    container.appendChild(alternativesContainer)
-    document.body.appendChild(container)
 }
 
 function multipleAnswer() {
@@ -54,9 +36,7 @@ let fake_question = {
 
 
 /*
-sendQuestion()
 showCorrectClient()
 showLeaderboard()
 showCorrectHost()
-showStartHost()
 */
