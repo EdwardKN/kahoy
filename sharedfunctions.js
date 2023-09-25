@@ -63,7 +63,6 @@ function shuffle(unshuffled){
     return shuffled
 }
 
-
 const questionTypes = ["Single answer", "Multiple choice"]
 const colors = ['red', 'blue', 'orange', 'green']
 
