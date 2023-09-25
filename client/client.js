@@ -1,5 +1,5 @@
 const gameInput = document.getElementById('game-input')
-const peer = new Peer(generateId(6))
+const peer = new Peer(generateId(6), { debug: 1 })
 let connection = undefined
 // Ok, kör!
 // Spelarnamn

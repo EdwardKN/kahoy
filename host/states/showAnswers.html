@@ -2,10 +2,16 @@
     <link rel="stylesheet" href="showAnswers.css">
 </head>
 <body>
-    <button type="button" class="next" onclick="fetchHTML(document, 'leaderboard.html', 'states/')">Next</button>
+    <div class="main-container">
+        <div id="top">
+            <h1 id="question"></h1>
+            <button type="button" onclick="fetchHTML(document, 'leaderboard.html', 'states/')">Next</button>
+        </div>
+        <div id="show-answers"></div>
+        <div id="alternatives-container"></div>
+        <footer></footer>
+    </div>
 
-    <script>
-        
-    </script>
+    <script>handleAnswers()</script>
 </body>
 </html>
