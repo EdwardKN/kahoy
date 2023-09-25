@@ -15,8 +15,11 @@ let currentGame = JSON.parse(localStorage.getItem('gameToStart')) || {
     ]
 }
 let idx = 0
+
 let clientsAnswers = 0
 let correctAnswers = []
+let allAnswers = {}
+let answers = []
 
 peer.on('connection', x => {
     let id = x.peer
@@ -63,13 +66,15 @@ peer.on('connection', x => {
         if (response.type === 'ANSWER') {
             clientsAnswers++
             clients[x.peer].answer = data.answer
+            data.answer.forEach(index => allAnswers[index]++)
 
-            if (clientsAnswers === Object.keys(clients).length) fetchHTML(document, 'showAnswers.html', 'states/')
+            if (clientsAnswers >= Object.keys(clients).length) fetchHTML(document, 'showAnswers.html', 'states/')
         }
     })
 })
 
-function handleAnswers() {
+function showAllAnswers() {
+    fetchHTML(document, 'showAnswers.html', 'states/')
     // Send to clients
     Object.values(clients).forEach(client => {
         client.connection.send({
@@ -77,40 +82,6 @@ function handleAnswers() {
             correct: validateAnswer(client.answer)
         })
     })
-    currentGame.questions[idx].answers.forEach((ans, i) => {
-        if (ans.rightAnswer) {
-            correctAnswers.push(i)
-        }
-    })
-
-    document.getElementById('question').textContent = currentGame.questions[idx].question
-
-    let showAnswers = document.getElementById('show-answers')
-    let alternativeContainer = document.getElementById('alternatives-container')
-
-    createAlternative(alternativeContainer, currentGame.questions[idx].answers.map(e => e.text))
-
-
-
-    let j = 0
-    for (let i of document.getElementsByClassName('alternative')) {
-        let container = document.createElement('div')
-        container.className = 'answer-container'
-        let amount = document.createElement('div')
-        let bottom = document.createElement('div')
-
-        bottom.textContent = i.textContent
-        amount.textContent = 'AMOUNT' + i.textContent
-        amount.style.width = '75%'
-        
-        let height = Object.values(clients).filter(client => client.answer.includes(`${j}`)) / Object.keys(clients).length
-        amount.style.height = `calc(80% * ${height})`
-
-        container.appendChild(amount)
-        container.appendChild(bottom)
-        showAnswers.appendChild(container)
-        j++
-    }
 }
 
 function validateAnswer(answer) {
@@ -145,32 +116,24 @@ function removeClient(id) {
     document.getElementById('waiting-for-players').style.visibility = 'visible'
 }
 
-function sendMessage(data) {
-    for (const client of Object.values(clients)) {
-        client.connection.send(data)
-    }
-}
-
-function startGame(game) {
-    currentGame = game
-    idx = 0
-
-    fetchHTML(document, 'preview.html', 'states/')
-}
-
 async function sendQuestion() {
     let data = currentGame.questions[idx]
-    let answers = data.answers.map(e => e.text)
-    currentGame.questions[idx].answers.forEach((ans, i) => { if (ans.rightAnswer) { correctAnswers.push(i) } })
+    answers = shuffle(data.answers.map((e, i) => [{ text: e.text, index: i, rightAnswer: e.rightAnswer }][0]))
 
-    sendMessage({
+    answers.forEach(ans => allAnswers[ans.index] = 0)
+    answers.forEach(ans => { if (ans.rightAnswer) { correctAnswers.push(ans.index) } })
+    answers = answers.map(e => e.text)
+    
+
+    Object.values(clients).forEach(client => {
+        client.connection.send({
         type: 'QUESTION',
         data: {
             questionType: data.type,
             question: data.question,
             alternatives: answers
         }
-    })
+    })})
 
     await fetchHTML(document, 'gameBlock.html', 'states/')
     createAlternative(document.getElementById('alternatives-container'), answers)

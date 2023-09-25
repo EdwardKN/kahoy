@@ -12,6 +12,41 @@
         <footer></footer>
     </div>
 
-    <script>handleAnswers()</script>
+    <script>
+        document.getElementById('question').textContent = currentGame.questions[idx].question
+
+        let showAnswers = document.getElementById('show-answers')
+        let alternativeContainer = document.getElementById('alternatives-container')
+
+        createAlternative(alternativeContainer, answers)
+
+        let children = alternativeContainer.children
+        let sum = Object.keys(clients).length
+
+        for (let i = 0; i < children.length; i++) {
+            // Bottom divs
+            children.className = 'alternative ' + colors[i]
+
+            // Height Chart
+            let element = children[i]
+            let container = document.createElement('div')
+            let height = document.createElement('div')
+            let footer = document.createElement('footer')
+
+            container.className = 'answer-container'
+            height.className = 'answer-height ' + colors[i]
+            footer.className = 'answer-footer ' + colors[i]
+            
+            height.style.width = '75%'
+            height.style.height = `calc(80% * ${allAnswers[i] / sum})`
+            footer.style.width = '75%'
+            footer.style.height = '10%'
+            footer.textContent = allAnswers[i]
+
+            container.appendChild(height)
+            container.appendChild(footer)
+            showAnswers.appendChild(container)
+        }
+    </script>
 </body>
 </html>

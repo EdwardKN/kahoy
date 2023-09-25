@@ -1,5 +1,10 @@
 async function handleQuestion(data) {
     await fetchHTML(document, 'gameBlock.html', '../host/states/')
+        .then(_ => {
+            clearInterval(clock)
+            document.getElementById('timer').remove()
+            document.getElementsByClassName('next')[0].remove()
+        })
     createAlternative(document.getElementById('alternatives-container'), data.alternatives, true)
 
     console.log(data)
