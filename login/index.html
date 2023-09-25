@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+    <h1>Login</h1>
+    <form id="form" onsubmit="login();">
+      <div class="form-control">
+        <input type="text" required placeholder="Username" id="username">
+      </div>
+      <div class="form-control">
+        <input type="password" required placeholder="Password" id = "password">
+      </div>
+      <button class="btn" >Login</button>
+      <p class="text">You don't have an account? <a href="create.html" target="_blank">Get One Here!</a></p>
+    </form>
+    <button class="btn" id="back" onclick="window.location.replace('../index.html');">Back</button>
+  </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/core.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
+    <script src="script.js"></script>
+    <script src="../sharedfunctions.js"></script>
+</body>
+</html>
