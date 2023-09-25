@@ -2,8 +2,8 @@ const peer = new Peer(generateId(6), { debug: 1 } )
 const responseTiem = 1000
 
 let clients = {}
-let currentGame = undefined
-let idx = undefined
+let currentGame = JSON.parse(localStorage.getItem('gameToStart'))
+let idx = 0
 let clientsAnswers = 0
 
 peer.on('connection', x => {
@@ -11,9 +11,7 @@ peer.on('connection', x => {
     x.on('open', () => {
         if (!currentGame || !document.getElementById('lock').state) return
         console.log(id + ' connected')
-        clients[id] = {
-            connection: peer.connect(id)
-        }
+        clients[id] = { connection: peer.connect(id) }
     })
 
     x.on('close', () => {
@@ -32,16 +30,18 @@ peer.on('connection', x => {
             let _valid = !(currentNames.includes(nickname) || 
                         nickname.length < 3 || nickname.length > 16)
             clients[id].connection.send({ type: 'NICKNAME', data: { valid: _valid }})
+            
             if (!_valid) return
             
             clients[id].nickname = nickname
             let client = document.createElement('div')
             client.className = 'client'
-            client.textContent = data.nickname
+            client.textContent = nickname
             client.onclick = () => removeClient(id)
 
             document.getElementById('client-container').appendChild(client)
             document.getElementsByClassName('next')[0].disabled = false
+            document.getElementById('waiting-for-players').style.visibility = 'hidden'
 
             heartbeat(id)
             clients[id].connection.send({ type: 'HEARTBEAT' })
@@ -97,9 +97,14 @@ function removeClient(id) {
         if (client.textContent === clients[id].nickname) { client.remove() }
     }
 
+    clearTimeout(clients[id].heart)
     clients[id].connection.close()
     delete clients[id]
-    if (Object.values(clients).length === 0) { document.getElementsByClassName('next')[0].disabled = true }
+
+    if (Object.values(clients).length !== 0) return
+
+    document.getElementsByClassName('next')[0].disabled = true
+    document.getElementById('waiting-for-players').style.visibility = 'visible'
 }
 
 function sendMessage(data) {
@@ -131,3 +136,5 @@ async function sendQuestion() {
     await fetchHTML(document, 'gameBlock.html', 'states/')
     createAlternative(document.getElementById('alternatives-container'), answers)
 }
+
+window.onload = () => fetchHTML(document, 'preview.html', 'states/')

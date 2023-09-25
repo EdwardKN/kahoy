@@ -24,7 +24,6 @@ peer.on('connection', x => {
     })
 
     x.on('close', () => {
-        console.log("Host Disconnected")
         window.location.reload()
     })
 

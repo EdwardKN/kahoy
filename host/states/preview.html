@@ -9,12 +9,14 @@
 
         <div id="lock-start-container">
             <div id="lock-start-wrapper">
-                <img id="lock" src="imgs/open-lock.png">
+                <img id="lock" src="../../imgs/open-lock.png">
                 <button class="next" type="button">Start</button>
             </div>
         </div>
 
-        <div id="client-container"></div>
+        <div id="client-container">
+            <div id="waiting-for-players">Waiting for players...</div>
+        </div>
 
         <div id="settings-container">
             <div id="amount-of-players">0</div>
@@ -33,9 +35,9 @@
         lock.state = true
         lock.onclick = () => {
             if (lock.state) {
-                lock.src = 'imgs/closed-lock.png'
+                lock.src = '../../imgs/closed-lock.png'
             } else if (!lock.state) {
-                lock.src = 'imgs/open-lock.png'
+                lock.src = '../../imgs/open-lock.png'
             }
             lock.state = !lock.state
         }
@@ -45,6 +47,7 @@
         start.onclick = () => sendQuestion()
 
         /* WAITING FOR PLAYERS HAS NOT BEEN IMPLEMENTED */
+        
         
         document.getElementById('fullscreen')
 
