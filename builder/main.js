@@ -2,12 +2,14 @@ var games = [];
 var gameButtons = [];
 var currentEditingGame = undefined;
 var questionButtons = [];
+var saved = true;
 
 var username = undefined;
 
 const questionTypes = ["Single answer", "Multiple choice"]
 
 function init() {
+    notSaved();
     document.getElementById("gameselectorContainer")?.remove();
     document.getElementById("currentGameContainer")?.remove();
     document.getElementById("questionListContainer")?.remove();
@@ -48,6 +50,7 @@ function init() {
         gameName.value = currentEditingGame.name;
         gameName.type = "text";
         gameName.id = "Gamename"
+        gameName.maxLength = 20;
         currentGameContainer.appendChild(gameName);
         gameName.onchange = function () {
             currentEditingGame.changeName(gameName.value);
@@ -65,8 +68,37 @@ function init() {
             currentEditingGame = games[0];
             init();
         }
-
         currentGameContainer.appendChild(removeGame);
+
+        let privateGame = document.createElement("button");
+        privateGame.id = "privateGame";
+        privateGame.innerText = currentEditingGame.private ? "Private" : "Public";
+
+
+        privateGame.onclick = function () {
+            currentEditingGame.private = !currentEditingGame.private
+            init();
+        }
+        currentGameContainer.appendChild(privateGame);
+
+
+        let playGame = document.createElement("button");
+        playGame.id = "playGame";
+        playGame.innerText = "Host Game"
+
+        playGame.onclick = function () {
+            save();
+            localStorage.setItem('gameToStart', JSON.prune(currentEditingGame));
+            window.location.replace('../host/host.html');
+        }
+
+        let tmp = currentEditingGame.questions.filter(g => (g.question != '' && g.answers.length > 1))
+        console.log(tmp)
+        playGame.disabled = !(tmp?.length > 0);
+
+        currentGameContainer.appendChild(playGame);
+
+
 
         let questionListContainer = document.createElement("container");
         questionListContainer.id = "questionListContainer";
@@ -86,121 +118,119 @@ function init() {
             questionButtons.push(document.createElement("button"));
             questionButtons[i].innerText = "Question " + (i + 1);
             questionButtons[i].onclick = function () {
-                for (let b = 0; b < currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1; b++) {
+                for (let b = 0; b < currentEditingGame.questions[currentEditingGame.currentSelectedQuestion]?.answers.length + 1; b++) {
                     document.getElementById("answer" + b)?.remove();
                     document.getElementById("rightAnswer" + b)?.remove();
                 }
+                console.log(i)
                 currentEditingGame.currentSelectedQuestion = i;
                 init();
             }
             questionListContainer.appendChild(questionButtons[i]);
         })
-        let tmpDiv = document.createElement("div");
 
-        let typebutton = document.createElement("select");
-        typebutton.id = "typebutton"
-        let option = document.createElement("option");
-        option.value = "0";
-        option.innerText = "Type Of Question";
-        typebutton.appendChild(option);
+        if (currentEditingGame.currentSelectedQuestion !== undefined) {
 
-        questionTypes.forEach(e => {
+            let tmpDiv = document.createElement("div");
+
+            let typebutton = document.createElement("select");
+            typebutton.id = "typebutton"
             let option = document.createElement("option");
-            option.value = e;
-            option.innerText = e;
+            option.value = "0";
+            option.innerText = "Type Of Question";
             typebutton.appendChild(option);
-        })
-        tmpDiv.className = "custom-select"
-        typebutton.value = (currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type : "0");
 
-        tmpDiv.appendChild(typebutton);
+            questionTypes.forEach(e => {
+                let option = document.createElement("option");
+                option.value = e;
+                option.innerText = e;
+                typebutton.appendChild(option);
+            })
+            tmpDiv.className = "custom-select"
+            typebutton.value = (currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type : "0");
 
-
-        let questionSettingContainer = document.createElement("container");
-        questionSettingContainer.id = "questionSettingContainer";
-        document.body.appendChild(questionSettingContainer);
-
-
-
+            tmpDiv.appendChild(typebutton);
 
 
-        let currentQuestion = document.createElement("input");
-        currentQuestion.type = "text";
-        currentQuestion.id = "currentQuestion";
-        currentQuestion.value = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question : "";
-        currentQuestion.placeholder = "Write your question here";
-        currentQuestion.onchange = function () {
-            currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question = currentQuestion.value;
-        }
-        questionSettingContainer.appendChild(currentQuestion);
-        questionSettingContainer.appendChild(tmpDiv);
-        fixSelectButtons([tmpDiv], function () {
-            currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type = typebutton.value;
-            init();
-        });
-        if (currentEditingGame.questions.length > 1) {
+            let questionSettingContainer = document.createElement("container");
+            questionSettingContainer.id = "questionSettingContainer";
+            document.body.appendChild(questionSettingContainer);
 
-            let removeQuestion = document.createElement("button");
-            removeQuestion.id = "removeQuestion";
-            removeQuestion.innerText = "Remove Question"
 
-            removeQuestion.onclick = function () {
-                currentEditingGame.questions.splice(currentEditingGame.currentSelectedQuestion, 1);
-                currentEditingGame.currentSelectedQuestion = 0;
-                init();
+
+
+
+            let currentQuestion = document.createElement("input");
+            currentQuestion.type = "text";
+            currentQuestion.id = "currentQuestion";
+            currentQuestion.value = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question : "";
+            currentQuestion.placeholder = "Write your question here";
+            currentQuestion.maxLength = 50;
+            currentQuestion.onchange = function () {
+                currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].question = currentQuestion.value;
             }
-            questionSettingContainer.appendChild(removeQuestion);
-        }
+            questionSettingContainer.appendChild(currentQuestion);
+            questionSettingContainer.appendChild(tmpDiv);
+            fixSelectButtons([tmpDiv], function () {
+                currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type = typebutton.value;
+                init();
+            });
+            if (currentEditingGame.questions.length > 1) {
 
-        let answerContainer = document.createElement("container");
-        answerContainer.id = "answerContainer";
-        document.body.appendChild(answerContainer);
+                let removeQuestion = document.createElement("button");
+                removeQuestion.id = "removeQuestion";
+                removeQuestion.innerText = "Remove Question"
 
-        let numberOfAnswers = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1 : 0
-
-        for (let b = 0; b < (numberOfAnswers > 4 ? 4 : numberOfAnswers); b++) {
-
-
-            let answer = document.createElement("input")
-            answer.type = "text";
-            answer.id = "answer" + b;
-            answer.placeholder = "Write answer " + (b + 1) + " here";
-            answer.value = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b]?.text ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b]?.text : ""
-            answer.onchange = function () {
-                if (answer.value != "") {
-                    currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b] = {}
-                    currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].text = answer.value;
-                } else {
-                    currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.splice(b, 1);
-                    document.getElementById("answer" + (currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1))?.remove();
+                removeQuestion.onclick = function () {
+                    currentEditingGame.questions.splice(currentEditingGame.currentSelectedQuestion, 1);
+                    currentEditingGame.currentSelectedQuestion = 0;
+                    init();
                 }
-                init();
+                questionSettingContainer.appendChild(removeQuestion);
             }
-            answerContainer.appendChild(answer);
 
-            if (b < currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length) {
+            let answerContainer = document.createElement("container");
+            answerContainer.id = "answerContainer";
+            document.body.appendChild(answerContainer);
 
-                let rightAnswer = document.createElement("input")
-                rightAnswer.id = "rightAnswer" + b;
-                rightAnswer.name = "rightAnswer";
-                if (currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type == questionTypes[0]) {
-                    rightAnswer.type = "radio";
-                    rightAnswer.checked = (b == currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].rightAnswer)
-                    rightAnswer.onchange = function () {
-                        currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].rightAnswer = b;
+            let numberOfAnswers = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1 : 0
+
+            for (let b = 0; b < (numberOfAnswers > 4 ? 4 : numberOfAnswers); b++) {
+
+
+                let answer = document.createElement("input")
+                answer.type = "text";
+                answer.id = "answer" + b;
+                answer.placeholder = "Write answer " + (b + 1) + " here";
+                answer.value = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b]?.text ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b]?.text : ""
+                answer.onchange = function () {
+                    if (answer.value != "") {
+                        currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b] = {}
+                        currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].text = answer.value;
+                    } else {
+                        currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.splice(b, 1);
+                        document.getElementById("answer" + (currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length + 1))?.remove();
                     }
-                } else {
+                    init();
+                }
+                answerContainer.appendChild(answer);
+
+                if (b < currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers.length) {
+
+                    let rightAnswer = document.createElement("input")
+                    rightAnswer.id = "rightAnswer" + b;
+                    rightAnswer.name = "rightAnswer";
+                    rightAnswer.type = ((currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].type == questionTypes[0]) ? "radio" : "checkbox")
                     rightAnswer.checked = currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].rightAnswer ? currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].rightAnswer : false
-                    rightAnswer.type = "checkbox";
                     rightAnswer.onchange = function () {
                         currentEditingGame.questions[currentEditingGame.currentSelectedQuestion].answers[b].rightAnswer = rightAnswer.checked;
                     }
+
+                    answerContainer.appendChild(rightAnswer);
                 }
 
-                answerContainer.appendChild(rightAnswer);
+
             }
-
-
         }
     }
 }
@@ -216,18 +246,21 @@ function loadGames() {
             e.questions.forEach(g => {
                 questions.push(new Question(g.type, g.question, g.answers, g.rightAnswer))
             })
-            games.push(new Game(e.name, questions));
+            console.log(e)
+
+            games.push(new Game(e.name, questions, e?.private));
         })
         init()
     })
 }
 
 class Game {
-    constructor(name, questions) {
+    constructor(name, questions, privateGame) {
         this.questions = questions ? questions : [new Question()];
         this.id = games.length;
         this.name = name ? name : "Game " + (this.id + 1)
-        this.currentSelectedQuestion = 0;
+        this.currentSelectedQuestion = undefined;
+        this.private = privateGame ? privateGame : false;
     }
     changeName(newName) {
         gameButtons[this.id].innerText = newName;
@@ -249,6 +282,13 @@ function save() {
         username: username,
         games: encodeURIComponent(JSON.prune(games))
     })
+    window.onbeforeunload = null;
+}
+
+function notSaved() {
+    window.onbeforeunload = function () {
+        return true;
+    };
 }
 
 loadGames();

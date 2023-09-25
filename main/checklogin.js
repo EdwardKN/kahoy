@@ -9,7 +9,6 @@ if (localStorage.getItem("session")) {
     document.getElementById("login").onclick = function () {
         window.location.replace('../login/index.html')
     }
-    document.getElementById("host").remove();
     document.getElementById("create").remove();
 
 }
