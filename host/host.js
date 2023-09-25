@@ -2,9 +2,21 @@ const peer = new Peer(generateId(6), { debug: 1 } )
 const responseTiem = 1000
 
 let clients = {}
-let currentGame = JSON.parse(localStorage.getItem('gameToStart'))
+let currentGame = JSON.parse(localStorage.getItem('gameToStart')) || {
+    currentSelectedQuestion: 0,
+    id: 0,
+    name: "Blablabla",
+    questions: [
+        {
+            type: 'Single answer',
+            answers: [{ text: '1', rightAnswer: false }, { text: '2', rightAnswer: false }, { text: '3', rightAnswer: true }, { text: '4', rightAnswer: false } ],
+            question: 'Vad är 1 + 2?'
+        }
+    ]
+}
 let idx = 0
 let clientsAnswers = 0
+let correctAnswers = []
 
 peer.on('connection', x => {
     let id = x.peer
@@ -50,33 +62,59 @@ peer.on('connection', x => {
         
         if (response.type === 'ANSWER') {
             clientsAnswers++
-            clients[x.peer].correctAnswer = validateAnswer(data.answer)
+            clients[x.peer].answer = data.answer
 
-            if (clientsAnswers !== Object.keys(clients).length) return
-
-            fetchHTML(document, 'showAnswers.html', 'states/')
-
-            Object.values(clients).forEach(client => {
-                client.connection.send({
-                    type: 'IS_CORRECT',
-                    correct: client.correctAnswer
-                })
-            })
+            if (clientsAnswers === Object.keys(clients).length) fetchHTML(document, 'showAnswers.html', 'states/')
         }
     })
 })
 
-function validateAnswer(answer) {
-    let correctAnswers = []
-    currentGame.questions[idx].answers.forEach((ans, i) => { if (ans.rightAnswer) { correctAnswers.push(i) } })
+function handleAnswers() {
+    // Send to clients
+    Object.values(clients).forEach(client => {
+        client.connection.send({
+            type: 'IS_CORRECT',
+            correct: validateAnswer(client.answer)
+        })
+    })
+    currentGame.questions[idx].answers.forEach((ans, i) => {
+        if (ans.rightAnswer) {
+            correctAnswers.push(i)
+        }
+    })
 
-    if (correctAnswers.length !== answer.length) return false
+    document.getElementById('question').textContent = currentGame.questions[idx].question
 
-    for (let i of correctAnswers) {
-        if (!answer.includes(i)) return false
+    let showAnswers = document.getElementById('show-answers')
+    let alternativeContainer = document.getElementById('alternatives-container')
+
+    createAlternative(alternativeContainer, currentGame.questions[idx].answers.map(e => e.text))
+
+
+
+    let j = 0
+    for (let i of document.getElementsByClassName('alternative')) {
+        let container = document.createElement('div')
+        container.className = 'answer-container'
+        let amount = document.createElement('div')
+        let bottom = document.createElement('div')
+
+        bottom.textContent = i.textContent
+        amount.textContent = 'AMOUNT' + i.textContent
+        amount.style.width = '75%'
+        
+        let height = Object.values(clients).filter(client => client.answer.includes(`${j}`)) / Object.keys(clients).length
+        amount.style.height = `calc(80% * ${height})`
+
+        container.appendChild(amount)
+        container.appendChild(bottom)
+        showAnswers.appendChild(container)
+        j++
     }
+}
 
-    return true
+function validateAnswer(answer) {
+    return correctAnswers.length === answer.length && correctAnswers.every(i => answer.includes(i))
 }
 
 function heartbeat(id) {
@@ -123,6 +161,7 @@ function startGame(game) {
 async function sendQuestion() {
     let data = currentGame.questions[idx]
     let answers = data.answers.map(e => e.text)
+    currentGame.questions[idx].answers.forEach((ans, i) => { if (ans.rightAnswer) { correctAnswers.push(i) } })
 
     sendMessage({
         type: 'QUESTION',

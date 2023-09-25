@@ -2,10 +2,7 @@ async function handleQuestion(data) {
     await fetchHTML(document, 'gameBlock.html', '../host/states/')
     createAlternative(document.getElementById('alternatives-container'), data.alternatives, true)
 
-    let interface = document.getElementById('interface-container')
-    interface.removeAttribute('id')
-    for (let child of interface.children) child.remove()
-
+    console.log(data)
     if (data.questionType === 'Single answer') singleAnswer(data)
 }
 
@@ -25,14 +22,6 @@ function singleAnswer() {
 function multipleAnswer() {
 
 }
-
-let fake_question = {
-    type: 'QUESTION',
-    questionType: 'Single Answer',
-    question: 'Vad är 2 * 5?',
-    alternatives: ['5', '10', '15', '20']
-}
-
 
 
 /*
