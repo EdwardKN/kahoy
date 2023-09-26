@@ -9,8 +9,7 @@
 
         <div id="lock-start-container">
             <div id="lock-start-wrapper">
-                <img id="lock" src="./../">
-                <img id="lock" src="./../imgs/open-lock.png">
+                <img id="lock" src="./../../imgs/open-lock.png">
                 <button class="next" type="button">Start</button>
             </div>
         </div>
@@ -36,9 +35,9 @@
         lock.state = true
         lock.onclick = () => {
             if (lock.state) {
-                lock.src = '../../imgs/closed-lock.png'
+                lock.src = './../../imgs/closed-lock.png'
             } else if (!lock.state) {
-                lock.src = '../../imgs/open-lock.png'
+                lock.src = './../../imgs/open-lock.png'
             }
             lock.state = !lock.state
         }

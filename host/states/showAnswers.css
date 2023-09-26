@@ -33,6 +33,6 @@ body {
     grid-template-columns: repeat(2, minmax(50px, 1fr));
 }
 
-.alternatives {
-    text-align: center;
+.answer-footer {
+    border-top: 1px solid black;
 }

@@ -34,22 +34,27 @@ peer.on('connection', x => {
         console.log(response)
 
         if (response.type === 'NICKNAME') {
-            if (!data.valid) { alert("Invalid username") }
-            else {
+            if (data.valid) {
                 document.getElementsByClassName('main-container')[0].remove()
                 let h1 = document.createElement('h1')
                 h1.textContent = 'Waiting for host...'
                 document.body.appendChild(h1)
+                return
             }
+            if (data.reason === 'SHORT') { alert("Username needs to be longer than 3 characters") }
+            if (data.reason === 'LONG') { alert("Username needs to be shorter than 16 characters") }
+            if (data.reason === 'TAKEN') { alert("Username already taken") }
         }
 
         if (response.type === 'QUESTION') handleQuestion(data)
 
-        if (response.type === 'ISCORRECT') {
-            let result = document.createElement('div')
-            result.className = 'is-correct-answer'
-            result.style.backgroundColor = data.correct ? 'green' : 'red'
-            document.body.appendChild(result)
+        if (response.type === 'IS_CORRECT') {
+            fetchHTML(document, 'clientCorrectAnswer.html', './../host/states/')
+                .then(() => {
+                    document.getElementById('correct').style.backgroundColor = (data.newScore > 0 ? 'green' : 'red')
+                    document.getElementById('score').textContent = data.newScore
+                    document.getElementById('total-score').textContent = data.score
+                })
         }
     })
 })

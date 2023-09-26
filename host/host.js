@@ -37,29 +37,31 @@ peer.on('connection', x => {
         if (response.type === 'HEARTBEAT') { clients[id].recieved = true; return }
 
         let data = response.data
+        let client = clients[x.peer]
         console.log(response)
 
         if (response.type === 'NICKNAME') {
             let nickname = data.nickname.trim()
             let currentNames = Object.values(clients).map(e => e.nickname)
-            let _valid = !(currentNames.includes(nickname) || 
-                        nickname.length < 3 || nickname.length > 16)
-            clients[id].connection.send({ type: 'NICKNAME', data: { valid: _valid }})
             
-            if (!_valid) return
+            if (nickname.length < 3) { client.connection.send({ type: 'NICKNAME', data: { valid: false, reason: 'SHORT' } }); return }
+            if (nickname.length > 16) { client.connection.send({ type: 'NICKNAME', data: { valid: false, reason: 'LONG' } }); return }
+            if (currentNames.includes(nickname)) { client.connection.send({ type: 'NICKNAME', data: { valid: false, reason: 'TAKEN' }}); return }
             
-            clients[id].nickname = nickname
-            let client = document.createElement('div')
-            client.className = 'client'
-            client.textContent = nickname
-            client.onclick = () => removeClient(id)
+            client.connection.send({ type: 'NICKNAME', data: { valid: true }})
+            client.nickname = nickname
 
-            document.getElementById('client-container').appendChild(client)
+            let clientDiv = document.createElement('div')
+            clientDiv.className = 'client'
+            clientDiv.textContent = nickname
+            clientDiv.onclick = () => removeClient(x.peer)
+
+            document.getElementById('client-container').appendChild(clientDiv)
             document.getElementsByClassName('next')[0].disabled = false
             document.getElementById('waiting-for-players').style.visibility = 'hidden'
 
-            heartbeat(id)
-            clients[id].connection.send({ type: 'HEARTBEAT' })
+            heartbeat(x.peer)
+            client.connection.send({ type: 'HEARTBEAT' })
         }
 
         
@@ -69,7 +71,11 @@ peer.on('connection', x => {
             data.answer.forEach(index => allAnswers[index]++)
             clients[x.peer].end = performance.now()
             console.log(clientsAnswers, Object.keys(clients).length)
-            if (clientsAnswers >= Object.keys(clients).length) showAllAnswers()
+            
+            if (clientsAnswers < Object.keys(clients).length) return
+            
+            clearInterval(clock)
+            showAllAnswers()
         }
     })
 })
@@ -83,8 +89,10 @@ function showAllAnswers() {
 
         client.connection.send({
             type: 'IS_CORRECT',
-            score: client.score,
-            newScore: newScore
+            data: {
+                score: client.score,
+                newScore: newScore
+            }
         })
     })
 }

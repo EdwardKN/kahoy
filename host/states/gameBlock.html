@@ -16,7 +16,7 @@
         let clock = setInterval(() => {
             let time = parseInt(timer.textContent) - 1
             if (time > 0) { timer.textContent = time; return }
-            fetchHTML(document, 'showAnswers.html', 'states/')
+            showAllAnswers()
             clearInterval(clock)
         }, 1000)
     </script>
