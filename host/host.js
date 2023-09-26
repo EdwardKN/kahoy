@@ -26,7 +26,7 @@ peer.on('connection', x => {
     x.on('open', () => {
         if (!currentGame || !document.getElementById('lock').state) return
         console.log(id + ' connected')
-        clients[id] = { connection: peer.connect(id) }
+        clients[id] = { connection: peer.connect(id), score: 0 }
     })
 
     x.on('close', () => {
@@ -67,8 +67,9 @@ peer.on('connection', x => {
             clientsAnswers++
             clients[x.peer].answer = data.answer
             data.answer.forEach(index => allAnswers[index]++)
-
-            if (clientsAnswers >= Object.keys(clients).length) fetchHTML(document, 'showAnswers.html', 'states/')
+            clients[x.peer].end = performance.now()
+            console.log(clientsAnswers, Object.keys(clients).length)
+            if (clientsAnswers >= Object.keys(clients).length) showAllAnswers()
         }
     })
 })
@@ -77,11 +78,21 @@ function showAllAnswers() {
     fetchHTML(document, 'showAnswers.html', 'states/')
     // Send to clients
     Object.values(clients).forEach(client => {
+        let newScore = calculateScore(client)
+        client.score += newScore
+
         client.connection.send({
             type: 'IS_CORRECT',
-            correct: validateAnswer(client.answer)
+            score: client.score,
+            newScore: newScore
         })
     })
+}
+
+function calculateScore(client) {
+    if (!validateAnswer(client.answer)) return 0
+    let s = 60 - (client.end - client.start) / 1000
+    return Math.max(500, 1000 * s / 60)
 }
 
 function validateAnswer(answer) {
@@ -127,13 +138,15 @@ async function sendQuestion() {
 
     Object.values(clients).forEach(client => {
         client.connection.send({
-        type: 'QUESTION',
-        data: {
-            questionType: data.type,
-            question: data.question,
-            alternatives: answers
-        }
-    })})
+            type: 'QUESTION',
+            data: {
+                questionType: data.type,
+                question: data.question,
+                alternatives: answers
+            }
+        })
+        client.start = performance.now()
+    })
 
     await fetchHTML(document, 'gameBlock.html', 'states/')
     createAlternative(document.getElementById('alternatives-container'), answers)

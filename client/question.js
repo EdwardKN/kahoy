@@ -1,5 +1,5 @@
 async function handleQuestion(data) {
-    await fetchHTML(document, 'gameBlock.html', '../host/states/')
+    await fetchHTML(document, 'gameBlock.html', './../host/states/')
         .then(_ => {
             clearInterval(clock)
             document.getElementById('timer').remove()
@@ -19,7 +19,7 @@ function singleAnswer() {
                 data: { answer: [alternative.getAttribute('index')] }
             })
 
-            fetchHTML(document, 'clientCorrectAnswer.html', '../host/states/')
+            fetchHTML(document, 'clientCorrectAnswer.html', './../host/states/')
         }
     }
 }
