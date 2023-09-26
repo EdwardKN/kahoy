@@ -18,7 +18,9 @@ function init() {
 
     let gameselectorContainer = document.createElement("container");
     gameselectorContainer.id = "gameselectorContainer";
+
     document.body.appendChild(gameselectorContainer);
+    gameselectorContainer.style.width = 'min(calc(100vw - 200px),' + (games.length * 200 + 135) + 'px)'
 
     let newButton = document.createElement("button");
     newButton.id = "newGame"
@@ -103,6 +105,7 @@ function init() {
         let questionListContainer = document.createElement("container");
         questionListContainer.id = "questionListContainer";
         document.body.appendChild(questionListContainer);
+        questionListContainer.style.width = 'min(calc(100vw - 200px),' + (currentEditingGame.questions?.length * 200 + 135) + 'px)'
 
         let newQuestionButton = document.createElement("button");
         newQuestionButton.id = "newQuestion"
