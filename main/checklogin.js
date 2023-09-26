@@ -7,7 +7,7 @@ if (localStorage.getItem("session")) {
     }
 } else {
     document.getElementById("login").onclick = function () {
-        window.location.replace('../login/index.html')
+        window.location.replace('./../login/index.html')
     }
     document.getElementById("create").remove();
 

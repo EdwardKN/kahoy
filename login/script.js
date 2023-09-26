@@ -33,7 +33,7 @@ function login(username, password) {
     checkPassword(loginUsername, CryptoJS.MD5(CryptoJS.MD5(loginPassword).toString()).toString(), function (e) {
         if (e) {
             localStorage.setItem("session", e);
-            window.location.replace('../index.html');
+            window.location.replace('./../index.html');
         } else {
             alert("Wrong username or password")
         }

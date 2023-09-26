@@ -53,7 +53,7 @@ function showGames(key) {
 
             playButton.onclick = function () {
                 localStorage.setItem('gameToStart', JSON.prune(e))
-                window.location.replace('../host/host.html');
+                window.location.replace('./../host/host.html');
 
             }
             gameDiv.appendChild(playButton);

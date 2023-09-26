@@ -28,7 +28,7 @@ function getUser(callback) {
     };
 };
 
-function getPublicGames(callback){
+function getPublicGames(callback) {
     const http = new XMLHttpRequest();
     const url = `https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/getkahoyusers?getpublic=true`;
     http.open("GET", url);
@@ -54,11 +54,11 @@ function checkPassword(username, password, callback) {
     };
 };
 
-function shuffle(unshuffled){
+function shuffle(unshuffled) {
     let shuffled = unshuffled
-    .map(value => ({ value, sort: Math.random() }))
-    .sort((a, b) => a.sort - b.sort)
-    .map(({ value }) => value)
+        .map(value => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value)
 
     return shuffled
 }

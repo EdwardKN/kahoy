@@ -89,7 +89,7 @@ function init() {
         playGame.onclick = function () {
             save();
             localStorage.setItem('gameToStart', JSON.prune(currentEditingGame));
-            window.location.replace('../host/host.html');
+            window.location.replace('./../host/host.html');
         }
 
         let tmp = currentEditingGame.questions.filter(g => (g.question != '' && g.answers.length > 1))
