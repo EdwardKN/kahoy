@@ -50,7 +50,7 @@ function init() {
         gameName.value = currentEditingGame.name;
         gameName.type = "text";
         gameName.id = "Gamename"
-        gameName.maxLength = 20;
+        gameName.maxLength = 12;
         currentGameContainer.appendChild(gameName);
         gameName.onchange = function () {
             currentEditingGame.changeName(gameName.value);
@@ -261,6 +261,7 @@ class Game {
         this.name = name ? name : "Game " + (this.id + 1)
         this.currentSelectedQuestion = undefined;
         this.private = privateGame ? privateGame : false;
+        this.author = username;
     }
     changeName(newName) {
         gameButtons[this.id].innerText = newName;

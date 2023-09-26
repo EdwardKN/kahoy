@@ -93,6 +93,7 @@ h1{
     display: grid;
     color: #FFFFFF;
     position: absolute;
+    height: 30px;
 }
 #gameBar{
   justify-content: center;
@@ -115,6 +116,12 @@ h1{
 
 .game h2{
     width: 100%;
+    text-align: center;
+}
+
+.game a{
+  margin-top: 15px;
+    width: 50%;
     text-align: center;
 }
 #viewQuestions{

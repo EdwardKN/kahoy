@@ -43,6 +43,11 @@ function showGames(key) {
 
             gameDiv.appendChild(gameName)
 
+            let gameAuthor = document.createElement("a");
+            gameAuthor.textContent = "Created By " + e.author;
+
+            gameDiv.appendChild(gameAuthor)
+
             let playButton = document.createElement("button")
             playButton.textContent = "Host Game"
 
@@ -59,14 +64,14 @@ function showGames(key) {
             viewQuestions.className = "viewQuestions"
 
             viewQuestions.onclick = function () {
-                if(viewingQuestion != e){
+                if (viewingQuestion != e) {
                     viewQuestion(e);
                     viewQuestions.textContent = "Hide Questions"
-                } else{
+                } else {
                     closeQuestion()
                     viewQuestions.textContent = "View Questions"
                 }
-                
+
             }
             gameDiv.appendChild(viewQuestions);
 
@@ -76,7 +81,7 @@ function showGames(key) {
     });
 }
 
-function viewQuestion(game){
+function viewQuestion(game) {
     closeQuestion();
     viewingQuestion = game;
 
@@ -88,13 +93,13 @@ function viewQuestion(game){
     questionDiv.className = "topBar";
 
 
-    
+
     document.body.appendChild(questionDiv)
 
     let questionContainer = document.createElement("container");
 
     questionContainer.id = "questionContainer";
-    
+
     questionDiv.appendChild(questionContainer)
 
     let headerDiv = document.createElement("div");
@@ -104,33 +109,33 @@ function viewQuestion(game){
 
     questionContainer.appendChild(headerDiv)
 
-    let header =  document.createElement("h1");
+    let header = document.createElement("h1");
 
     header.textContent = "Questions";
 
     headerDiv.appendChild(header)
 
-    game.questions.forEach(e =>{
+    game.questions.forEach(e => {
         let div = document.createElement("div");
 
         div.textContent = e.question;
         div.className = "questionDiv"
 
-        div.onclick = function(){
+        div.onclick = function () {
             div.selected = !div.selected;
 
-            if(div.selected){
+            if (div.selected) {
                 div.style.height = (e.answers.length * 50 + 40) + "px"
-                Array.from(div.children).forEach(e => {if(e.nodeName == "A"){e.remove()}});
-                e.answers.forEach(e =>{
+                Array.from(div.children).forEach(e => { if (e.nodeName == "A") { e.remove() } });
+                e.answers.forEach(e => {
                     let tmp = document.createElement("a");
                     tmp.textContent = e.text + (e.rightAnswer ? "✔️" : "❌");
                     tmp.className = "answer"
 
                     div.appendChild(tmp);
                 })
-            }else{
-                Array.from(div.children).forEach(e => {if(e.nodeName == "A"){e.remove()}});
+            } else {
+                Array.from(div.children).forEach(e => { if (e.nodeName == "A") { e.remove() } });
                 div.style.height = "40px"
             }
         }
@@ -139,7 +144,7 @@ function viewQuestion(game){
     })
 }
 
-function closeQuestion(){    
+function closeQuestion() {
     viewingQuestion = undefined;
     Array.from(document.getElementsByClassName("viewQuestions")).forEach(e => e.textContent = "View Questions");
 
