@@ -30,7 +30,7 @@ function login(username, password) {
     let loginUsername = username ? username : document.getElementById("username").value;
     let loginPassword = password ? password : document.getElementById("password").value;
 
-    checkPassword(loginUsername, CryptoJS.MD5(CryptoJS.MD5(loginPassword).toString()).toString(), function (e) {
+    checkPassword(loginUsername, loginPassword, function (e) {
         if (e) {
             localStorage.setItem("session", e);
             window.location.replace('./../index.html');

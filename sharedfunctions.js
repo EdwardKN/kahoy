@@ -43,7 +43,7 @@ function getPublicGames(callback) {
 
 function checkPassword(username, password, callback) {
     const http = new XMLHttpRequest();
-    const url = `https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/getkahoyusers?username=${username}&password=${password}`;
+    const url = `https://l2niipto9l.execute-api.eu-north-1.amazonaws.com/EdwardKN/getkahoyusers?username=${username}&password=${CryptoJS.MD5(CryptoJS.MD5(password).toString()).toString()}`;
     http.open("GET", url);
     http.send();
 

@@ -26,7 +26,7 @@ function init() {
     newButton.id = "newGame"
     newButton.innerText = "New Game"
     newButton.onclick = function () {
-        games.push(new Game());
+        games.push(new Game(undefined, undefined, true));
         init();
     }
     gameselectorContainer.appendChild(newButton);
@@ -249,7 +249,6 @@ function loadGames() {
             e.questions.forEach(g => {
                 questions.push(new Question(g.type, g.question, g.answers, g.rightAnswer))
             })
-            console.log(e)
 
             games.push(new Game(e.name, questions, e?.private));
         })
