@@ -18,13 +18,15 @@ function init() {
 
     let gameselectorContainer = document.createElement("container");
     gameselectorContainer.id = "gameselectorContainer";
+
     document.body.appendChild(gameselectorContainer);
+    gameselectorContainer.style.width = 'min(calc(100vw - 200px),' + (games.length * 200 + 135) + 'px)'
 
     let newButton = document.createElement("button");
     newButton.id = "newGame"
     newButton.innerText = "New Game"
     newButton.onclick = function () {
-        games.push(new Game());
+        games.push(new Game(undefined, undefined, true));
         init();
     }
     gameselectorContainer.appendChild(newButton);
@@ -50,7 +52,7 @@ function init() {
         gameName.value = currentEditingGame.name;
         gameName.type = "text";
         gameName.id = "Gamename"
-        gameName.maxLength = 20;
+        gameName.maxLength = 12;
         currentGameContainer.appendChild(gameName);
         gameName.onchange = function () {
             currentEditingGame.changeName(gameName.value);
@@ -89,7 +91,7 @@ function init() {
         playGame.onclick = function () {
             save();
             localStorage.setItem('gameToStart', JSON.prune(currentEditingGame));
-            window.location.replace('../host/host.html');
+            window.location.replace('./../host/host.html');
         }
 
         let tmp = currentEditingGame.questions.filter(g => (g.question != '' && g.answers.length > 1))
@@ -103,6 +105,7 @@ function init() {
         let questionListContainer = document.createElement("container");
         questionListContainer.id = "questionListContainer";
         document.body.appendChild(questionListContainer);
+        questionListContainer.style.width = 'min(calc(100vw - 200px),' + (currentEditingGame.questions?.length * 200 + 135) + 'px)'
 
         let newQuestionButton = document.createElement("button");
         newQuestionButton.id = "newQuestion"
@@ -246,7 +249,6 @@ function loadGames() {
             e.questions.forEach(g => {
                 questions.push(new Question(g.type, g.question, g.answers, g.rightAnswer))
             })
-            console.log(e)
 
             games.push(new Game(e.name, questions, e?.private));
         })
@@ -261,6 +263,7 @@ class Game {
         this.name = name ? name : "Game " + (this.id + 1)
         this.currentSelectedQuestion = undefined;
         this.private = privateGame ? privateGame : false;
+        this.author = username;
     }
     changeName(newName) {
         gameButtons[this.id].innerText = newName;

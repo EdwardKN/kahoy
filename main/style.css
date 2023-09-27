@@ -93,22 +93,35 @@ h1{
     display: grid;
     color: #FFFFFF;
     position: absolute;
+    height: 30px;
 }
-.gameContainer{
-    display: flex;
+#gameBar{
+  justify-content: center;
+}
+#gameContainer{
+  display: inline-block;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
 }
 .game{
     display:inline-flex;
     height: 150px;
-    width: 400px;
+    width: 380px;
     background-color: white;
-    margin: 20px;
+    margin: 10px;
     border-radius: 25px;
     border-bottom: gray solid 8px;
 }
 
 .game h2{
     width: 100%;
+    text-align: center;
+}
+
+.game a{
+  margin-top: 15px;
+    width: 50%;
     text-align: center;
 }
 #viewQuestions{
