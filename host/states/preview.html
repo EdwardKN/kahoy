@@ -29,7 +29,7 @@
     <script>
         let gamePin = document.getElementById('game-pin')
         gamePin.textContent = peer.id
-        gamePin.onclick = () => { navigator.clipboard.writeText(peer.id) }
+        document.getElementById("game-pin-text").onclick = () => { navigator.clipboard.writeText(peer.id) }
 
         let lock = document.getElementById('lock')
         lock.state = true

@@ -21,6 +21,15 @@ peer.on('connection', x => {
             type: 'NICKNAME',
             data: { nickname: gameInput.value }
         })
+
+        gameInput.onkeydown = (event) => {
+            if (event.keyCode !== 13) return 
+            connection.send({
+                type: 'NICKNAME',
+                data: { nickname: gameInput.value }
+            })
+        }
+
     })
 
     x.on('close', () => {
@@ -66,6 +75,6 @@ function connectToHost(hostId) {
     connection = peer.connect(hostId)
 }
 
-
-// Stopping page from reloading when pressing enter in input field for some reason
-document.getElementById('game-input').addEventListener('keydown', (e) => { if (e.keyCode === 13) { e.preventDefault() } })
+gameInput.onkeydown = (event) => {
+    if (event.keyCode === 13) { connectToHost(gameInput.value) }
+}

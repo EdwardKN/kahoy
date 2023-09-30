@@ -38,7 +38,7 @@
             footer.className = 'answer-footer ' + colors[i]
             
             height.style.width = '75%'
-            height.style.height = `calc(80% * ${allAnswers[i] / sum})`
+            height.style.height = sum === 0 ? 0 : `calc(80% * ${allAnswers[i] / sum})`
             footer.style.width = '75%'
             footer.style.height = '10%'
             footer.textContent = allAnswers[i]

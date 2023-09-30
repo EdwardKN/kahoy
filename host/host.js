@@ -81,6 +81,14 @@ peer.on('connection', x => {
 })
 
 function showAllAnswers() {
+    clearInterval(clock)
+    timer.remove()
+    document.getElementsByClassName('next')[0].remove()
+    delete timer
+    delete clock
+    timer = undefined
+    clock = undefined
+    console.log(timer, clock)
     fetchHTML(document, 'showAnswers.html', 'states/')
     // Send to clients
     Object.values(clients).forEach(client => {
@@ -90,21 +98,22 @@ function showAllAnswers() {
         client.connection.send({
             type: 'IS_CORRECT',
             data: {
-                score: client.score,
-                newScore: newScore
+                score: Math.round(client.score),
+                newScore: Math.round(newScore)
             }
         })
     })
 }
 
 function calculateScore(client) {
-    if (!validateAnswer(client.answer)) return 0
+    if (!client.answer || !validateAnswer(client.answer)) return 0
     let s = 60 - (client.end - client.start) / 1000
     return Math.max(500, 1000 * s / 60)
 }
 
 function validateAnswer(answer) {
-    return correctAnswers.length === answer.length && correctAnswers.every(i => answer.includes(i))
+    console.log(correctAnswers, answer)
+    return correctAnswers.length === answer.length && correctAnswers.every(i => answer.includes(`${i}`))
 }
 
 function heartbeat(id) {
@@ -137,13 +146,16 @@ function removeClient(id) {
 
 async function sendQuestion() {
     let data = currentGame.questions[idx]
-    answers = shuffle(data.answers.map((e, i) => [{ text: e.text, index: i, rightAnswer: e.rightAnswer }][0]))
 
-    answers.forEach(ans => allAnswers[ans.index] = 0)
-    answers.forEach(ans => { if (ans.rightAnswer) { correctAnswers.push(ans.index) } })
-    answers = answers.map(e => e.text)
+    if (data === undefined) { fetchHTML(document, 'leaderboard.html', 'states/'); return }
+
+    answers = shuffle(data.answers.map(e => [{ text: e.text, rightAnswer: e.rightAnswer }][0]))
+    answers = answers.map((ans, i) => {
+        allAnswers[i] = 0
+        if (ans.rightAnswer) correctAnswers.push(i)
+        return ans.text
+    })
     
-
     Object.values(clients).forEach(client => {
         client.connection.send({
             type: 'QUESTION',
@@ -158,6 +170,8 @@ async function sendQuestion() {
 
     await fetchHTML(document, 'gameBlock.html', 'states/')
     createAlternative(document.getElementById('alternatives-container'), answers)
+    document.getElementById('question-text').textContent = data.question
+    idx++
 }
 
 window.onload = () => fetchHTML(document, 'preview.html', 'states/')

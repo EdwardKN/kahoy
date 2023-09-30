@@ -3,7 +3,7 @@
 </head>
 <body>
     <main class="main-container">
-        <header id="question-text">This is a question</header>
+        <header id="question-text"></header>
         <div id="interface-container">
             <div id="timer">60</div>
             <button class="next" onclick="showAllAnswers()">Next</button>
@@ -13,11 +13,11 @@
 
     <script>
         let timer = document.getElementById('timer')
+
         let clock = setInterval(() => {
             let time = parseInt(timer.textContent) - 1
             if (time > 0) { timer.textContent = time; return }
             showAllAnswers()
-            clearInterval(clock)
         }, 1000)
     </script>
 </body>

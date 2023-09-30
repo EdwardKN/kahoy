@@ -1,13 +1,14 @@
 async function handleQuestion(data) {
     await fetchHTML(document, 'gameBlock.html', './../host/states/')
-        .then(_ => {
-            clearInterval(clock)
-            document.getElementById('timer').remove()
-            document.getElementsByClassName('next')[0].remove()
-        })
+        
+    clearInterval(clock)
+    document.getElementById('timer').remove()
+    document.getElementsByClassName('next')[0].remove()
+    document.getElementById('question-text').textContent = data.question    
+    
     createAlternative(document.getElementById('alternatives-container'), data.alternatives, true)
 
-    console.log(data)
+
     if (data.questionType === 'Single answer') singleAnswer(data)
 }
 

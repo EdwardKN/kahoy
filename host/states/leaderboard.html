@@ -1,6 +1,31 @@
 <head>
+    <link rel="stylesheet" href="leaderboard.css">
 </head>
 <body>
+    <div class="main-container">
+        <div class="leaderboard-wrapper">
+            <div id="leaderboard"></div>
+            <div id="cool-player"></div>
+        </div>
+        <button onclick="sendQuestion()">Next</button>
+    </div>
+
+    <script>
+        clearInterval(clock)
+       
+        let leaderboard = document.getElementById('leaderboard')
+        let sorted = Object.values(clients).sort((a, b) => b.score - a.score)
+        let length = Math.min(5, sorted.length)
+
+        for (let i = 0; i < length; i++) {
+            let container = document.createElement('div')
+            container.className = 'client-on-leaderboard'
+            container.textContent = sorted[i].nickname + '    ' + Math.round(sorted[i].score)
+
+            leaderboard.appendChild(container)
+        }
     
+        if (currentGame.questions[idx] === undefined) document.getElementsByClassName('next')[0].remove()
+    </script>
 </body>
 </html>
