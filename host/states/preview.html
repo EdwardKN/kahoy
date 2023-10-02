@@ -2,29 +2,27 @@
     <link rel="stylesheet" href="preview.css">
 </head>
 <body>
-    <main class="main-container">
-        <header class="game-pin-container">
-            <h1 id="game-pin-text">Game Pin: <div id="game-pin"></div></h1>
-        </header>
+    <header class="game-pin-container">
+        <h1 id="game-pin-text">Game Pin: <div id="game-pin"></div></h1>
+    </header>
 
-        <div id="lock-start-container">
-            <div id="lock-start-wrapper">
-                <img id="lock" src="./../../imgs/open-lock.png">
-                <button class="next" type="button">Start</button>
-            </div>
+    <div id="lock-start-container">
+        <div id="lock-start-wrapper">
+            <img id="lock" src="./../../imgs/open-lock.png">
+            <button class="next" type="button">Start</button>
         </div>
+    </div>
 
-        <div id="client-container">
-            <div id="waiting-for-players">Waiting for players...</div>
-        </div>
+    <div id="client-container">
+        <div id="waiting-for-players">Waiting for players...</div>
+    </div>
 
-        <div id="settings-container">
-            <div id="amount-of-players">0</div>
-            <div>Sound</div>
-            <div>Settings</div>
-            <div id="fullscreen">Fullscreen</div>
-        </div>
-    </main>
+    <footer id="settings-container">
+        <div id="amount-of-players">0</div>
+        <div>Sound</div>
+        <img id="settings" src="./../imgs/settings.png">
+        <img id="fullscreen" src="./../imgs/maximize.png">
+    </footer>
     
     <script>
         let gamePin = document.getElementById('game-pin')
@@ -33,6 +31,7 @@
 
         let lock = document.getElementById('lock')
         lock.state = true
+
         lock.onclick = () => {
             if (lock.state) {
                 lock.src = './../../imgs/closed-lock.png'
@@ -49,12 +48,16 @@
         /* WAITING FOR PLAYERS HAS NOT BEEN IMPLEMENTED */
         
         
-        document.getElementById('fullscreen')
+        let fullscreen = document.getElementById('fullscreen')
 
         fullscreen.onclick = () => {
             if (document.fullscreen) {
                 document.exitFullscreen()
-            } else document.documentElement.requestFullscreen()
+                fullscreen.src = "./../imgs/maximize.png"
+                return
+            }
+            document.documentElement.requestFullscreen()
+            fullscreen.src = "./../imgs/minimize.png"
         }
     </script>
 </body>

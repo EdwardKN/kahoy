@@ -117,3 +117,14 @@ function createAlternative(container, alternatives, isClient = false) {
         container.appendChild(alternative)
     }
 }
+
+function createFakeClients(amount) {
+    for (let _  = 0; _ < amount; _++) {
+        let clientDiv = document.createElement('div')
+        clientDiv.className = 'client'
+        clientDiv.textContent = `${_}`.repeat(3)
+        clientDiv.onclick = () => removeClient(x.peer)
+
+        document.getElementById('client-container').appendChild(clientDiv)
+    }
+}
